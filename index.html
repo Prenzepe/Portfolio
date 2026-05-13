@@ -91,9 +91,9 @@
   .banner-video {
     position:absolute; inset:0; z-index:0;
     width:100%; height:100%;
-    object-fit:cover;
-    object-position:center top;
     pointer-events:none;
+    border:none;
+    transform:scale(1.5);
   }
 
   .banner-overlay {
@@ -740,9 +740,15 @@
   </ul>
 </nav>
 
-<!-- HERO — YouTube banner (muted, looped, no controls) -->
+<!-- HERO — Vimeo banner (muted, looped, no controls) -->
 <section id="hero">
-  
+  <iframe
+    src="https://player.vimeo.com/video/1191866809?autoplay=1&loop=1&muted=1&background=1&controls=0"
+    class="banner-video"
+    frameborder="0"
+    allow="autoplay; fullscreen"
+    allowfullscreen
+  ></iframe>
   <div class="banner-overlay"></div>
   <div class="scanlines"></div>
   <div class="banner-vignette"></div>
@@ -784,7 +790,7 @@
   <div class="about-visual reveal">
     <div class="avatar-frame">
       <div class="avatar-glow"></div>
-      <img class="avatar-img" src="" alt="prenze avatar" />
+      <img class="avatar-img" src="https://cdn.discordapp.com/attachments/868400522837762059/1504133547135336478/prenze1-avatar.png?ex=6a05e107&is=6a048f87&hm=53cf323cf28a9a08b495eb5960aa493f7578cddbc1e8396e02f5f79acc064f2d" alt="prenze avatar" />
       <div class="avatar-badge">_prenze1</div>
     </div>
   </div>
