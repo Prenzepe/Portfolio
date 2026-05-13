@@ -1200,7 +1200,7 @@
   function renderFeatured(projects) {
     const grid = document.getElementById('featured-grid');
     if (!projects.length) {
-      grid.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-family:'Share Tech Mono',monospace;font-size:.75rem;letter-spacing:3px">No featured projects yet — add folders to projects/featured/</p>';
+      grid.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-family:monospace;font-size:.75rem;letter-spacing:3px">No featured projects yet — add folders to projects/featured/</p>';
       return;
     }
     grid.innerHTML = projects.map((p, i) => `
