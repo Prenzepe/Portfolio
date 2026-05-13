@@ -742,9 +742,7 @@
 
 <!-- HERO — YouTube banner (muted, looped, no controls) -->
 <section id="hero">
-  <video class="banner-video" autoplay muted loop playsinline preload="auto">
-    <source src="asset_1.mp4" type="video/mp4">
-  </video>
+  
   <div class="banner-overlay"></div>
   <div class="scanlines"></div>
   <div class="banner-vignette"></div>
@@ -786,7 +784,7 @@
   <div class="about-visual reveal">
     <div class="avatar-frame">
       <div class="avatar-glow"></div>
-      <img class="avatar-img" src="asset_2.jpg" alt="prenze avatar" />
+      <img class="avatar-img" src="" alt="prenze avatar" />
       <div class="avatar-badge">_prenze1</div>
     </div>
   </div>
@@ -1255,7 +1253,7 @@
     // Media area
     if (p.media) {
       if (p.mediaType === 'video') {
-        mMedia.innerHTML = `<video src="${p.media}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover"></video>`;
+        mMedia.innerHTML = ``;
       } else {
         mMedia.innerHTML = `<img src="${p.media}" alt="${p.title}">`;
       }
@@ -1307,7 +1305,7 @@
         <div class="glare"></div>
         ${p.media
           ? (p.mediaType === 'video'
-              ? `<video src="${p.media}" muted loop playsinline></video>`
+              ? ``
               : `<img src="${p.media}" alt="${p.title}">`)
           : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,0,0,0.15);font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:4px">${String(i+1).padStart(2,'0')}</div>`
         }
