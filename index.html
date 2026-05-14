@@ -993,33 +993,7 @@
   <div class="inner">
     <div class="section-label reveal">// WHAT I OFFER</div>
     <h2 class="section-title reveal">Services</h2>
-    <div class="services-list">
-      <div class="service-row reveal">
-        <div class="service-row-name">Game System Scripting</div>
-        <div class="service-row-price">Combat · Inventory · Quests · Abilities</div>
-        <div class="service-row-arrow">→</div>
-      </div>
-      <div class="service-row reveal">
-        <div class="service-row-name">Data & Save Systems</div>
-        <div class="service-row-price">ProfileService · DataStore2 · Migration</div>
-        <div class="service-row-arrow">→</div>
-      </div>
-      <div class="service-row reveal">
-        <div class="service-row-name">UI / GUI Scripting</div>
-        <div class="service-row-price">Animated · Responsive · Mobile-ready</div>
-        <div class="service-row-arrow">→</div>
-      </div>
-      <div class="service-row reveal">
-        <div class="service-row-name">Anti-Exploit Systems</div>
-        <div class="service-row-price">Server-side · Sanity checks · Rate limiting</div>
-        <div class="service-row-arrow">→</div>
-      </div>
-      <div class="service-row reveal">
-        <div class="service-row-name">Script Debugging & Optimisation</div>
-        <div class="service-row-price">Performance · Memory · Legacy rewrites</div>
-        <div class="service-row-arrow">→</div>
-      </div>
-    </div>
+    <div class="services-list" id="services-list"><!-- rendered by JS --></div>
   </div>
 </section>
 
@@ -1213,6 +1187,28 @@
   // ── SITE DATA — loaded from site-data.json (controlled by Discord bot) ──
   let PROJECTS = []; // populated after fetch
 
+  // ── DEFAULT SERVICES ──
+  const DISCORD_URL = 'https://discord.gg/7mMxf4stGH';
+  const DEFAULT_SERVICES = [
+    { name: 'Game System Scripting',       desc: 'Combat · Inventory · Quests · Abilities' },
+    { name: 'Data & Save Systems',         desc: 'ProfileService · DataStore2 · Migration' },
+    { name: 'UI / GUI Scripting',          desc: 'Animated · Responsive · Mobile-ready'    },
+    { name: 'Anti-Exploit Systems',        desc: 'Server-side · Sanity checks · Rate limiting' },
+    { name: 'Script Debugging & Optimisation', desc: 'Performance · Memory · Legacy rewrites' },
+  ];
+
+  function renderServices(services) {
+    const list = document.getElementById('services-list');
+    if (!list) return;
+    list.innerHTML = services.map(s => `
+      <a class="service-row reveal" href="${DISCORD_URL}" target="_blank" rel="noopener" style="text-decoration:none;display:flex;align-items:center;cursor:pointer;">
+        <div class="service-row-name">${s.name}</div>
+        <div class="service-row-price">${s.desc}</div>
+        <div class="service-row-arrow">→</div>
+      </a>`).join('');
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  }
+
   // ── DEFAULT EXPERTISE (used if site-data has none) ──
   const DEFAULT_SKILLS = [
     { icon:'⚡', tag:'SYS::LUAU',  name:'Lua / Luau',        desc:'Native Luau scripting — typed code, clean module patterns, performance-optimized loops, and zero tolerance for memory leaks.' },
@@ -1269,6 +1265,9 @@
         document.querySelector('nav').style.top = bar.offsetHeight + 'px';
       }
     }
+
+    // Services
+    renderServices(data.services && data.services.length ? data.services : DEFAULT_SERVICES);
 
     // Skills / Expertise
     renderSkills(data.expertise && data.expertise.length ? data.expertise : DEFAULT_SKILLS);
@@ -1355,7 +1354,7 @@
         }
       }
     } catch {
-      if (!isPolled) { PROJECTS = []; renderFeatured([]); renderSkills(DEFAULT_SKILLS); }
+      if (!isPolled) { PROJECTS = []; renderFeatured([]); renderSkills(DEFAULT_SKILLS); renderServices(DEFAULT_SERVICES); }
     }
   }
 
