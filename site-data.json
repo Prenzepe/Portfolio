@@ -2,8 +2,8 @@
   "status": "open",
   "pricing": 25,
   "pricingRobux": 10000,
-  "announcement": "MAYYYY DISCOUNTTT",
-  "announcementExpiry": "2026-05-14T03:10:58.016Z",
+  "announcement": null,
+  "announcementExpiry": null,
   "projects": {
     "featured": [],
     "gallery": []
