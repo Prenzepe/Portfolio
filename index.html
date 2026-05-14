@@ -1278,23 +1278,44 @@
   }
 
   // ── FETCH & BOOT ──
-  async function loadProjects() {
+  let lastSiteDataHash = null;
+
+  async function loadProjects(isPolled = false) {
     try {
       const res = await fetch('site-data.json?v=' + Date.now());
       if (!res.ok) throw new Error('missing');
-      const data = await res.json();
+      const text = await res.text();
+
+      // Only re-render if data actually changed
+      if (text === lastSiteDataHash) return;
+      lastSiteDataHash = text;
+
+      const data = JSON.parse(text);
       applySiteData(data);
       const featured = data.projects?.featured || [];
       const gallery  = data.projects?.gallery  || [];
       PROJECTS = [...featured, ...gallery];
-      renderFeatured(featured);
+      if (!isPolled) renderFeatured(featured);
+      else {
+        // Smooth re-render on poll update
+        const grid = document.getElementById('featured-grid');
+        if (grid) {
+          grid.style.transition = 'opacity 0.3s';
+          grid.style.opacity = '0';
+          setTimeout(() => {
+            renderFeatured(featured);
+            grid.style.opacity = '1';
+          }, 300);
+        }
+      }
     } catch {
-      // Fallback defaults
-      PROJECTS = [];
-      renderFeatured([]);
+      if (!isPolled) { PROJECTS = []; renderFeatured([]); }
     }
   }
-  loadProjects();
+
+  // Initial load + poll every 5 seconds
+  loadProjects(false);
+  setInterval(() => loadProjects(true), 5000);
 
   // ── MODAL ──
   const modal    = document.getElementById('proj-modal');
