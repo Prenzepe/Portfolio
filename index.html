@@ -283,6 +283,42 @@
 
   /* CODE BLOCK */
   .code-section { max-width:1200px; margin:0 auto; padding:0 60px 120px; position:relative; z-index:10; perspective:1400px; }
+  /* ── AVAILABILITY CARD ── */
+  .avail-card {
+    display:flex; align-items:center; gap:18px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.07);
+    border-left:3px solid var(--red);
+    padding:18px 24px; border-radius:4px;
+    max-width:420px; margin:32px auto 0;
+    font-family:'Share Tech Mono',monospace;
+    transition: border-color .4s, box-shadow .4s;
+  }
+  .avail-card.status-open   { border-left-color:#00ff88; }
+  .avail-card.status-busy   { border-left-color:#ffcc00; }
+  .avail-card.status-closed { border-left-color:#ff3333; }
+  .avail-pulse {
+    width:12px; height:12px; border-radius:50%;
+    background:#00ff88; flex-shrink:0;
+    box-shadow:0 0 0 0 rgba(0,255,136,0.6);
+    animation:pulse-ring 2s infinite;
+  }
+  .avail-pulse.busy   { background:#ffcc00; box-shadow:0 0 0 0 rgba(255,204,0,0.6); animation:pulse-ring-yellow 2s infinite; }
+  .avail-pulse.closed { background:#ff3333; box-shadow:none; animation:none; }
+  @keyframes pulse-ring {
+    0%   { box-shadow:0 0 0 0   rgba(0,255,136,0.6); }
+    70%  { box-shadow:0 0 0 10px rgba(0,255,136,0);   }
+    100% { box-shadow:0 0 0 0   rgba(0,255,136,0);    }
+  }
+  @keyframes pulse-ring-yellow {
+    0%   { box-shadow:0 0 0 0   rgba(255,204,0,0.6); }
+    70%  { box-shadow:0 0 0 10px rgba(255,204,0,0);   }
+    100% { box-shadow:0 0 0 0   rgba(255,204,0,0);    }
+  }
+  .avail-text { display:flex; flex-direction:column; gap:3px; }
+  .avail-label { font-size:.65rem; letter-spacing:3px; color:rgba(255,255,255,0.35); }
+  .avail-status { font-size:.9rem; letter-spacing:2px; color:#fff; }
+
   .code-window {
     border:1px solid rgba(255,0,0,0.2);
     background:rgba(4,0,0,0.97);
@@ -732,7 +768,7 @@
 <!-- NAV -->
 <nav>
   <a class="nav-logo" href="#"><span>P</span>RENZE</a>
-  <div class="status-badge" id="status-badge"><span class="status-dot" id="status-dot"></span><span id="status-label">AVAILABLE</span></div>
+  
   <button class="hamburger" id="hamburger" aria-label="Menu" onclick="toggleMenu()">
     <span></span><span></span><span></span>
   </button>
@@ -823,43 +859,8 @@
   <div class="inner">
     <div class="section-label reveal">// CAPABILITIES</div>
     <h2 class="section-title reveal">Roblox<br>Expertise</h2>
-    <div class="skills-grid">
-      <div class="skill-card reveal">
-        <div class="glare"></div><div class="depth-tag">SYS::LUAU</div><span class="skill-icon">⚡</span>
-        <div class="skill-name">Lua / Luau</div>
-        <div class="skill-desc">Native Luau scripting — typed code, clean module patterns, performance-optimized loops, and zero tolerance for memory leaks.</div>
-        <div class="skill-bar-wrap"><div class="skill-bar"></div></div>
-      </div>
-      <div class="skill-card reveal">
-        <div class="glare"></div><div class="depth-tag">SYS::NET</div><span class="skill-icon">🔁</span>
-        <div class="skill-name">Server–Client</div>
-        <div class="skill-desc">Rock-solid RemoteEvent and RemoteFunction architecture. Server-authoritative logic with client-side prediction where it matters.</div>
-        <div class="skill-bar-wrap"><div class="skill-bar"></div></div>
-      </div>
-      <div class="skill-card reveal">
-        <div class="glare"></div><div class="depth-tag">SYS::DATA</div><span class="skill-icon">💾</span>
-        <div class="skill-name">Data Systems</div>
-        <div class="skill-desc">DataStore2, ProfileService, session locking, auto-save, migration handling — player data that never corrupts or gets lost.</div>
-        <div class="skill-bar-wrap"><div class="skill-bar"></div></div>
-      </div>
-      <div class="skill-card reveal">
-        <div class="glare"></div><div class="depth-tag">SYS::GAME</div><span class="skill-icon">🎮</span>
-        <div class="skill-name">Game Systems</div>
-        <div class="skill-desc">Combat, inventory, quests, abilities, round managers, leaderboards — complete, interconnected systems built from scratch.</div>
-        <div class="skill-bar-wrap"><div class="skill-bar"></div></div>
-      </div>
-      <div class="skill-card reveal">
-        <div class="glare"></div><div class="depth-tag">SYS::UI</div><span class="skill-icon">🖥️</span>
-        <div class="skill-name">UI / UX Scripting</div>
-        <div class="skill-desc">Fluid animated GUIs with tweening, responsive layouts, reactive state, and smooth transitions that feel genuinely polished.</div>
-        <div class="skill-bar-wrap"><div class="skill-bar"></div></div>
-      </div>
-      <div class="skill-card reveal">
-        <div class="glare"></div><div class="depth-tag">SYS::SEC</div><span class="skill-icon">🛡️</span>
-        <div class="skill-name">Anti-Exploit</div>
-        <div class="skill-desc">Server-side sanity checks, rate limiting, client validation, and custom kick systems that actually catch cheaters.</div>
-        <div class="skill-bar-wrap"><div class="skill-bar"></div></div>
-      </div>
+    <div class="skills-grid" id="skills-grid">
+      <!-- rendered by JS from site-data.json -->
     </div>
   </div>
 </section>
@@ -868,12 +869,12 @@
 <div class="code-section">
   <div class="section-label reveal">// SAMPLE</div>
   <h2 class="section-title reveal" style="margin-bottom:30px">Clean Code,<br>Always</h2>
-  <div class="code-window reveal">
+  <div class="code-window reveal" id="code-window">
     <div class="code-titlebar">
       <div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div>
-      <span class="code-filename">CombatSystem.lua — ServerScript</span>
+      <span class="code-filename" id="code-filename">CombatSystem.lua — ServerScript</span>
     </div>
-    <pre><span class="ln">01</span><span class="cm">-- // PRENZE — Combat Module  (server-authoritative)</span>
+    <pre id="code-pre"><span class="ln">01</span><span class="cm">-- // PRENZE — Combat Module  (server-authoritative)</span>
 <span class="ln">02</span>
 <span class="ln">03</span><span class="kw">local</span> Players    = game:<span class="fn">GetService</span>(<span class="str">"Players"</span>)
 <span class="ln">04</span><span class="kw">local</span> RunService = game:<span class="fn">GetService</span>(<span class="str">"RunService"</span>)
@@ -1212,19 +1213,49 @@
   // ── SITE DATA — loaded from site-data.json (controlled by Discord bot) ──
   let PROJECTS = []; // populated after fetch
 
+  // ── DEFAULT EXPERTISE (used if site-data has none) ──
+  const DEFAULT_SKILLS = [
+    { icon:'⚡', tag:'SYS::LUAU',  name:'Lua / Luau',        desc:'Native Luau scripting — typed code, clean module patterns, performance-optimized loops, and zero tolerance for memory leaks.' },
+    { icon:'🔁', tag:'SYS::NET',   name:'Server–Client',     desc:'Rock-solid RemoteEvent and RemoteFunction architecture. Server-authoritative logic with client-side prediction where it matters.' },
+    { icon:'💾', tag:'SYS::DATA',  name:'Data Systems',      desc:'DataStore2, ProfileService, session locking, auto-save, migration handling — player data that never corrupts or gets lost.' },
+    { icon:'🎮', tag:'SYS::GAME',  name:'Game Systems',      desc:'Combat, inventory, quests, abilities, round managers, leaderboards — complete, interconnected systems built from scratch.' },
+    { icon:'🖥️', tag:'SYS::UI',   name:'UI / UX Scripting', desc:'Fluid animated GUIs with tweening, responsive layouts, reactive state, and smooth transitions that feel genuinely polished.' },
+    { icon:'🛡️', tag:'SYS::SEC',  name:'Anti-Exploit',      desc:'Server-side sanity checks, rate limiting, client validation, and custom kick systems that actually catch cheaters.' },
+  ];
+
+  function renderSkills(skills) {
+    const grid = document.getElementById('skills-grid');
+    if (!grid) return;
+    grid.innerHTML = skills.map(s => `
+      <div class="skill-card-scene reveal">
+        <div class="skill-card">
+          <div class="glare"></div>
+          <div class="depth-tag">${s.tag}</div>
+          <span class="skill-icon">${s.icon}</span>
+          <div class="skill-name">${s.name}</div>
+          <div class="skill-desc">${s.desc}</div>
+          <div class="skill-bar-wrap"><div class="skill-bar"></div></div>
+        </div>
+      </div>`).join('');
+    apply3DTilt('.skill-card', 5, 0.04);
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  }
+
   // ── APPLY SITE DATA (status, announcement, pricing, projects) ──
   function applySiteData(data) {
-    // Status badge
+    // Availability card
     const statusMap = {
-      open:   { label: 'AVAILABLE',         color: '#00ff88' },
-      busy:   { label: 'LIMITED',           color: '#ffcc00' },
-      closed: { label: 'CLOSED',            color: '#ff3333' }
+      open:   { label: 'OPEN FOR WORK',      pulse: '',       cardClass: 'status-open'   },
+      busy:   { label: 'LIMITED SLOTS',      pulse: 'busy',   cardClass: 'status-busy'   },
+      closed: { label: 'CLOSED — DM TO WAIT LIST', pulse: 'closed', cardClass: 'status-closed' }
     };
     const s = statusMap[data.status] || statusMap.open;
-    const dot   = document.getElementById('status-dot');
-    const label = document.getElementById('status-label');
-    if (dot)   dot.style.background = s.color;
-    if (label) label.textContent    = s.label;
+    const card   = document.getElementById('avail-card');
+    const pulse  = document.getElementById('avail-pulse');
+    const sText  = document.getElementById('avail-status-text');
+    if (card)  { card.className  = 'avail-card reveal ' + s.cardClass; }
+    if (pulse) { pulse.className = 'avail-pulse ' + s.pulse; }
+    if (sText) { sText.textContent = s.label; }
 
     // Announcement banner
     const bar      = document.getElementById('announce-bar');
@@ -1236,6 +1267,21 @@
         bar.style.display   = 'block';
         // Shift nav down
         document.querySelector('nav').style.top = bar.offsetHeight + 'px';
+      }
+    }
+
+    // Skills / Expertise
+    renderSkills(data.expertise && data.expertise.length ? data.expertise : DEFAULT_SKILLS);
+
+    // Code window
+    if (data.codeSnippet) {
+      const filename = document.getElementById('code-filename');
+      const pre      = document.getElementById('code-pre');
+      if (filename && data.codeSnippet.filename) filename.textContent = data.codeSnippet.filename;
+      if (pre && data.codeSnippet.html) {
+        pre.style.transition = 'opacity 0.3s';
+        pre.style.opacity = '0';
+        setTimeout(() => { pre.innerHTML = data.codeSnippet.html; pre.style.opacity = '1'; }, 300);
       }
     }
 
@@ -1309,7 +1355,7 @@
         }
       }
     } catch {
-      if (!isPolled) { PROJECTS = []; renderFeatured([]); }
+      if (!isPolled) { PROJECTS = []; renderFeatured([]); renderSkills(DEFAULT_SKILLS); }
     }
   }
 
