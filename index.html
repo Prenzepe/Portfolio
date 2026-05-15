@@ -29,35 +29,16 @@
   html { scroll-behavior:smooth; }
   body { background:#000; color:var(--white); font-family:'Rajdhani',sans-serif; overflow-x:hidden; cursor:none; }
 
-  /* HAMBURGER */
-  .hamburger {
-    display: none; flex-direction: column; justify-content: center; gap: 5px;
-    width: 36px; height: 36px; background: none; border: 1px solid rgba(255,0,0,0.3);
-    cursor: pointer; padding: 8px 7px; z-index: 200;
-    transition: border-color .3s;
-  }
-  .hamburger:hover { border-color: var(--red); }
-  .hamburger span {
-    display: block; width: 100%; height: 1.5px;
-    background: var(--white); transition: transform .3s, opacity .3s;
-    transform-origin: center;
-  }
-  .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-  .hamburger.open span:nth-child(2) { opacity: 0; }
-  .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+  /* HAMBURGER — removed, flat nav always */
+  .hamburger { display: none !important; }
   @media(max-width:768px) {
-    .hamburger { display: flex; }
-    .nav-links {
-      display: none; flex-direction: column; gap: 0;
-      position: fixed; top: 0; right: 0; bottom: 0; width: 260px;
-      background: rgba(0,0,0,0.97); border-left: 1px solid rgba(255,0,0,0.15);
-      padding: 80px 30px 40px; z-index: 150;
-      backdrop-filter: blur(20px);
-      transform: translateX(100%); transition: transform .4s cubic-bezier(.22,1,.36,1);
-    }
-    .nav-links.open { display: flex; transform: translateX(0); }
-    .nav-links a { font-size: .9rem; padding: 16px 0; border-bottom: 1px solid rgba(255,0,0,0.08); letter-spacing: 4px; }
-    .nav-links a::after { display: none; }
+    nav { padding: 16px 20px; }
+    .nav-links { display: flex !important; gap: 18px; }
+    .nav-links a { font-size: .6rem; letter-spacing: 2px; }
+  }
+  @media(max-width:480px) {
+    .nav-links { gap: 10px; }
+    .nav-links a { font-size: .52rem; letter-spacing: 1px; }
   }
 
   /* CURSOR */
@@ -95,6 +76,26 @@
     50% { opacity:.5; box-shadow:0 0 4px #00ff88,0 0 8px rgba(0,255,136,0.3); }
   }
   @media(max-width:768px) { .status-badge { position:static; transform:none; font-size:.55rem; padding:5px 10px; } }
+
+  /* NAV STATUS DOT — next to PRENZE logo */
+  .nav-logo { position: relative; display: inline-flex; align-items: center; gap: 0; }
+  .nav-status-dot {
+    display: inline-block;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #00ff88;
+    box-shadow: 0 0 6px #00ff88, 0 0 14px rgba(0,255,136,0.5);
+    margin-left: 8px;
+    flex-shrink: 0;
+    animation: statusPulse 2.4s ease-in-out infinite;
+    transition: background .5s, box-shadow .5s;
+    position: relative; top: -2px;
+  }
+  .nav-status-dot.busy   { background: #ffcc00; box-shadow: 0 0 6px #ffcc00, 0 0 14px rgba(255,204,0,0.5); animation: navDotYellow 2.4s ease-in-out infinite; }
+  .nav-status-dot.closed { background: #ff3333; box-shadow: 0 0 5px #ff3333; animation: none; }
+  @keyframes navDotYellow {
+    0%,100% { opacity:1; box-shadow:0 0 6px #ffcc00,0 0 14px rgba(255,204,0,0.5); }
+    50%      { opacity:.45; box-shadow:0 0 3px #ffcc00,0 0 6px rgba(255,204,0,0.2); }
+  }
 
   .nav-links a::after { content:''; position:absolute; bottom:-4px; left:0; width:0; height:1px; background:var(--red); transition:width .3s; }
   .nav-links a:hover { color:var(--white); }
@@ -771,11 +772,11 @@
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo" href="#"><span>P</span>RENZE</a>
+  <a class="nav-logo" href="#">
+    <span>P</span>RENZE
+    <span class="nav-status-dot" id="nav-status-dot" title="Open for work"></span>
+  </a>
   
-  <button class="hamburger" id="hamburger" aria-label="Menu" onclick="toggleMenu()">
-    <span></span><span></span><span></span>
-  </button>
   <ul class="nav-links" id="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#skills">Skills</a></li>
@@ -849,12 +850,12 @@
   <div class="about-text reveal">
     <div class="section-label">// WHO AM I</div>
     <h2 class="section-title">About<br>Prenze</h2>
-    <p>I got into Roblox scripting because I wanted to build things that actually felt good to play. That curiosity turned into a serious craft — <strong>server-authoritative combat systems</strong>, persistent data layers, fluid UIs — all written in Luau that scales as your game grows.</p>
-    <p>I take commissions seriously. You'll get clean, readable code with zero "we'll fix it later" logic. Whether it's one tight feature or an entire game framework, <strong>I ship it right the first time</strong>.</p>
+    <p id="about-para-1">I got into Roblox scripting because I wanted to build things that actually felt good to play. That curiosity turned into a serious craft — <strong>server-authoritative combat systems</strong>, persistent data layers, fluid UIs — all written in Luau that scales as your game grows.</p>
+    <p id="about-para-2">I take commissions seriously. You'll get clean, readable code with zero "we'll fix it later" logic. Whether it's one tight feature or an entire game framework, <strong>I ship it right the first time</strong>.</p>
     <div class="stats">
-      <div class="stat"><span class="stat-num">50+</span><span class="stat-label">Projects Shipped</span></div>
-      <div class="stat"><span class="stat-num">3+</span><span class="stat-label">Years Luau</span></div>
-      <div class="stat"><span class="stat-num">0</span><span class="stat-label">Refunds</span></div>
+      <div class="stat"><span class="stat-num" id="stat-0-num">50+</span><span class="stat-label" id="stat-0-label">Projects Shipped</span></div>
+      <div class="stat"><span class="stat-num" id="stat-1-num">3+</span><span class="stat-label" id="stat-1-label">Years Luau</span></div>
+      <div class="stat"><span class="stat-num" id="stat-2-num">0</span><span class="stat-label" id="stat-2-label">Refunds</span></div>
     </div>
   </div>
 </div>
@@ -1109,110 +1110,135 @@
     loop();
   })();
 
-  // ── HAMBURGER MENU ──
-  function toggleMenu() {
-    const btn   = document.getElementById('hamburger');
-    const links = document.getElementById('nav-links');
-    btn.classList.toggle('open');
-    links.classList.toggle('open');
-  }
-  document.querySelectorAll('#nav-links a').forEach(a => {
-    a.addEventListener('click', () => {
-      document.getElementById('hamburger').classList.remove('open');
-      document.getElementById('nav-links').classList.remove('open');
-    });
-  });
 
   // ── CURSOR ──
   (function(){
     const canvas = document.getElementById('cursor-canvas');
     const ctx = canvas.getContext('2d');
-    let W, H, mx = 0, my = 0, lx = 0, ly = 0;
-    const sparkles = [];
-
-    function randColor(){ return '#ffffff'; }
-
-    function spawnSparkle(spread){
-      sparkles.push({
-        x: mx + (Math.random()-.5)*spread,
-        y: my + (Math.random()-.5)*spread,
-        size: Math.random()*3.5+1,
-        alpha: 0.7+Math.random()*0.3,
-        decay: 0.025+Math.random()*0.03,
-        rot: Math.random()*Math.PI*2,
-        rotSpeed: (Math.random()-.5)*0.08,
-        vy: -(Math.random()*0.6+0.2),
-        color: randColor(),
-      });
-    }
+    let W, H, mx = -300, my = -300;
+    let glintAngle = 0;
+    let glintPhase = 0; // 0=idle, grows to trigger glint
+    let glintActive = false;
+    let glintProgress = 0; // 0..1 sweep
+    let idleTimer = 0;
 
     function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
     resize(); window.addEventListener('resize', resize);
 
-    // Moving: spawn on movement
-    document.addEventListener('mousemove', e => {
-      mx = e.clientX; my = e.clientY;
-      const spd = Math.hypot(mx - lx, my - ly);
-      if (spd > 2) {
-        const count = Math.min(Math.floor(spd / 6) + 1, 3);
-        for (let i = 0; i < count; i++) spawnSparkle(22);
-      }
-      lx = mx; ly = my;
-    });
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
 
-    // Idle: spawn slowly even when still
-    setInterval(() => {
-      if (Math.random() < 0.7) spawnSparkle(28);
-    }, 120);
+    // Force cursor:none on EVERYTHING so native cursor never shows
+    const styleBlock = document.createElement('style');
+    styleBlock.textContent = '*, *::before, *::after { cursor: none !important; }';
+    document.head.appendChild(styleBlock);
 
-    function drawArrow(x, y){
-      ctx.save(); ctx.translate(x, y);
+    // Glint sweep — draws a slow diagonal shimmer line across the cursor
+    function drawGlint(x, y, progress, scale) {
+      // progress 0..1, sweeps diagonally
+      const size = 10 * scale;
+      const sweep = (progress * 2 - 1) * size * 2.2; // -size*2.2 .. +size*2.2
+
+      ctx.save();
+      ctx.translate(x, y);
+
+      // Clip to cursor shape area
       ctx.beginPath();
-      ctx.moveTo(0,0); ctx.lineTo(0,15); ctx.lineTo(3.5,11);
-      ctx.lineTo(6.5,17); ctx.lineTo(8.5,16); ctx.lineTo(5.5,10);
-      ctx.lineTo(10,10); ctx.closePath();
-      ctx.strokeStyle='rgba(0,0,0,0.8)'; ctx.lineWidth=2;
-      ctx.lineJoin='round'; ctx.stroke();
-      ctx.fillStyle='#ffffff'; ctx.fill();
+      ctx.arc(0, 0, size + 4, 0, Math.PI * 2);
+      ctx.clip();
+
+      // Shimmer line at 45°
+      const gx = sweep * Math.cos(Math.PI/4);
+      const gy = sweep * Math.sin(Math.PI/4);
+      const len = size * 1.2;
+      const nx = -Math.sin(Math.PI/4) * len;
+      const ny =  Math.cos(Math.PI/4) * len;
+
+      const grad = ctx.createLinearGradient(gx - nx, gy - ny, gx + nx, gy + ny);
+      const alpha = Math.sin(progress * Math.PI) * 0.55;
+      grad.addColorStop(0,   'rgba(255,255,255,0)');
+      grad.addColorStop(0.4, `rgba(255,180,180,${alpha})`);
+      grad.addColorStop(0.5, `rgba(255,255,255,${alpha * 1.6})`);
+      grad.addColorStop(0.6, `rgba(255,180,180,${alpha})`);
+      grad.addColorStop(1,   'rgba(255,255,255,0)');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(gx - nx, gy - ny);
+      ctx.lineTo(gx + nx, gy + ny);
+      ctx.stroke();
+
       ctx.restore();
     }
 
-    function drawStar(s){
-      ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.rot);
-      ctx.globalAlpha = s.alpha;
-      ctx.shadowColor = '#ffffff'; ctx.shadowBlur = 24;
+    function drawCursor(x, y) {
+      const R = 8;   // outer ring radius
+      const DOT = 1.8;
+      const ARM = 5;  // crosshair arm length
+      const GAP = 3;  // gap from center
+
+      ctx.save();
+      ctx.translate(x, y);
+
+      // Outer ring — dim red, always present
       ctx.beginPath();
-      const r1=s.size, r2=s.size*0.2;
-      for(let i=0;i<4;i++){
-        const oa=(i*Math.PI/2)-Math.PI/2, ia=oa+Math.PI/4;
-        i===0 ? ctx.moveTo(Math.cos(oa)*r1,Math.sin(oa)*r1)
-               : ctx.lineTo(Math.cos(oa)*r1,Math.sin(oa)*r1);
-        ctx.lineTo(Math.cos(ia)*r2,Math.sin(ia)*r2);
-      }
-      ctx.closePath();
-      ctx.fillStyle = '#ffffff'; ctx.fill();
-      // Bloom pass 1
-      ctx.globalAlpha = s.alpha * 0.6;
-      ctx.shadowBlur = 40;
+      ctx.arc(0, 0, R, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,0,0,0.28)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Glow behind ring
+      ctx.shadowColor = '#FF0000';
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.arc(0, 0, R, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,0,0,0.12)';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Crosshair arms
+      ctx.strokeStyle = 'rgba(255,0,0,0.7)';
+      ctx.lineWidth = 1;
+      ctx.lineCap = 'round';
+      ctx.shadowColor = '#FF0000';
+      ctx.shadowBlur = 5;
+      [[0,-GAP,0,-(GAP+ARM)],[0,GAP,0,GAP+ARM],[-GAP,0,-(GAP+ARM),0],[GAP,0,GAP+ARM,0]].forEach(([x1,y1,x2,y2]) => {
+        ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      });
+      ctx.shadowBlur = 0;
+
+      // Center dot
+      ctx.beginPath();
+      ctx.arc(0, 0, DOT, 0, Math.PI * 2);
+      ctx.fillStyle = '#FF0000';
+      ctx.shadowColor = '#FF0000';
+      ctx.shadowBlur = 10;
       ctx.fill();
-      // Bloom pass 2 — wide halo
-      ctx.globalAlpha = s.alpha * 0.25;
-      ctx.shadowBlur = 80;
-      ctx.fill();
+
       ctx.restore();
     }
 
-    (function loop(){
-      ctx.clearRect(0,0,W,H);
-      for(let i=sparkles.length-1;i>=0;i--){
-        const s=sparkles[i];
-        s.alpha -= s.decay; s.y += s.vy; s.rot += s.rotSpeed;
-        if(s.alpha<=0){ sparkles.splice(i,1); continue; }
-        drawStar(s);
+    let lastT = 0;
+    (function loop(t){
+      const dt = Math.min(t - lastT, 50); lastT = t;
+      ctx.clearRect(0, 0, W, H);
+
+      // Trigger a glint every 2.5-4s when idle
+      idleTimer += dt;
+      if (!glintActive && idleTimer > (2500 + Math.random() * 1500)) {
+        glintActive = true;
+        glintProgress = 0;
+        idleTimer = 0;
       }
-      drawArrow(mx,my);
+      if (glintActive) {
+        glintProgress += dt / 600; // ~600ms sweep
+        if (glintProgress >= 1) { glintActive = false; glintProgress = 0; }
+        else drawGlint(mx, my, glintProgress, 1);
+      }
+
+      drawCursor(mx, my);
       requestAnimationFrame(loop);
-    })();
+    })(0);
   })();
 
   // ── SCROLL REVEAL ──
@@ -1353,6 +1379,15 @@
     if (pulse) pulse.className = 'avail-pulse ' + s.pulse;
     if (sText) sText.textContent = s.label;
 
+    // ── NAV STATUS DOT ──
+    const navDot = document.getElementById('nav-status-dot');
+    if (navDot) {
+      const statusKey = data.status || 'open';
+      navDot.className = 'nav-status-dot' + (statusKey !== 'open' ? ' ' + statusKey : '');
+      const titles = { open: 'Open for work', busy: 'Limited availability', closed: 'Closed for commissions' };
+      navDot.title = titles[statusKey] || 'Open for work';
+    }
+
     const bar     = document.getElementById('announce-bar');
     const barText = document.getElementById('announce-text');
     if (bar && barText && data.announcement) {
@@ -1362,6 +1397,29 @@
         bar.style.display   = 'block';
         document.querySelector('nav').style.top = bar.offsetHeight + 'px';
       }
+    }
+
+    // ── ABOUT TEXT ──
+    if (data.aboutText) {
+      const p1 = document.getElementById('about-para-1');
+      const p2 = document.getElementById('about-para-2');
+      if (Array.isArray(data.aboutText)) {
+        if (p1 && data.aboutText[0]) p1.innerHTML = data.aboutText[0];
+        if (p2 && data.aboutText[1]) p2.innerHTML = data.aboutText[1];
+      } else {
+        if (p1) p1.innerHTML = data.aboutText;
+        if (p2) p2.style.display = 'none';
+      }
+    }
+
+    // ── STATS ──
+    if (data.stats && Array.isArray(data.stats)) {
+      data.stats.slice(0, 3).forEach((st, i) => {
+        const numEl   = document.getElementById(`stat-${i}-num`);
+        const labelEl = document.getElementById(`stat-${i}-label`);
+        if (numEl   && st.value != null) numEl.textContent   = st.value;
+        if (labelEl && st.label)         labelEl.textContent = st.label;
+      });
     }
 
     renderServices(data.services && data.services.length ? data.services : DEFAULT_SERVICES);
