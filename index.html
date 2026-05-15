@@ -27,7 +27,7 @@
   }
   *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior:smooth; }
-  body { background:#000; color:var(--white); font-family:'Rajdhani',sans-serif; overflow-x:hidden; cursor:none; }
+  body { background:#000; color:var(--white); font-family:'Rajdhani',sans-serif; overflow-x:hidden; }
 
   /* HAMBURGER — removed, flat nav always */
   .hamburger { display: none !important; }
@@ -39,12 +39,6 @@
   @media(max-width:480px) {
     .nav-links { gap: 10px; }
     .nav-links a { font-size: .52rem; letter-spacing: 1px; }
-  }
-
-  /* CURSOR */
-  #cursor-canvas {
-    position: fixed; inset: 0; z-index: 9999;
-    pointer-events: none; width: 100%; height: 100%;
   }
 
   /* NOISE */
@@ -766,7 +760,6 @@
 </head>
 <body>
 
-<canvas id="cursor-canvas"></canvas>
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
 
@@ -1110,136 +1103,6 @@
     loop();
   })();
 
-
-  // ── CURSOR ──
-  (function(){
-    const canvas = document.getElementById('cursor-canvas');
-    const ctx = canvas.getContext('2d');
-    let W, H, mx = -300, my = -300;
-    let glintAngle = 0;
-    let glintPhase = 0; // 0=idle, grows to trigger glint
-    let glintActive = false;
-    let glintProgress = 0; // 0..1 sweep
-    let idleTimer = 0;
-
-    function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-    resize(); window.addEventListener('resize', resize);
-
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-
-    // Force cursor:none on EVERYTHING so native cursor never shows
-    const styleBlock = document.createElement('style');
-    styleBlock.textContent = '*, *::before, *::after { cursor: none !important; }';
-    document.head.appendChild(styleBlock);
-
-    // Glint sweep — draws a slow diagonal shimmer line across the cursor
-    function drawGlint(x, y, progress, scale) {
-      // progress 0..1, sweeps diagonally
-      const size = 10 * scale;
-      const sweep = (progress * 2 - 1) * size * 2.2; // -size*2.2 .. +size*2.2
-
-      ctx.save();
-      ctx.translate(x, y);
-
-      // Clip to cursor shape area
-      ctx.beginPath();
-      ctx.arc(0, 0, size + 4, 0, Math.PI * 2);
-      ctx.clip();
-
-      // Shimmer line at 45°
-      const gx = sweep * Math.cos(Math.PI/4);
-      const gy = sweep * Math.sin(Math.PI/4);
-      const len = size * 1.2;
-      const nx = -Math.sin(Math.PI/4) * len;
-      const ny =  Math.cos(Math.PI/4) * len;
-
-      const grad = ctx.createLinearGradient(gx - nx, gy - ny, gx + nx, gy + ny);
-      const alpha = Math.sin(progress * Math.PI) * 0.55;
-      grad.addColorStop(0,   'rgba(255,255,255,0)');
-      grad.addColorStop(0.4, `rgba(255,180,180,${alpha})`);
-      grad.addColorStop(0.5, `rgba(255,255,255,${alpha * 1.6})`);
-      grad.addColorStop(0.6, `rgba(255,180,180,${alpha})`);
-      grad.addColorStop(1,   'rgba(255,255,255,0)');
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(gx - nx, gy - ny);
-      ctx.lineTo(gx + nx, gy + ny);
-      ctx.stroke();
-
-      ctx.restore();
-    }
-
-    function drawCursor(x, y) {
-      const R = 8;   // outer ring radius
-      const DOT = 1.8;
-      const ARM = 5;  // crosshair arm length
-      const GAP = 3;  // gap from center
-
-      ctx.save();
-      ctx.translate(x, y);
-
-      // Outer ring — dim red, always present
-      ctx.beginPath();
-      ctx.arc(0, 0, R, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(255,0,0,0.28)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      // Glow behind ring
-      ctx.shadowColor = '#FF0000';
-      ctx.shadowBlur = 8;
-      ctx.beginPath();
-      ctx.arc(0, 0, R, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(255,0,0,0.12)';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-
-      // Crosshair arms
-      ctx.strokeStyle = 'rgba(255,0,0,0.7)';
-      ctx.lineWidth = 1;
-      ctx.lineCap = 'round';
-      ctx.shadowColor = '#FF0000';
-      ctx.shadowBlur = 5;
-      [[0,-GAP,0,-(GAP+ARM)],[0,GAP,0,GAP+ARM],[-GAP,0,-(GAP+ARM),0],[GAP,0,GAP+ARM,0]].forEach(([x1,y1,x2,y2]) => {
-        ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
-      });
-      ctx.shadowBlur = 0;
-
-      // Center dot
-      ctx.beginPath();
-      ctx.arc(0, 0, DOT, 0, Math.PI * 2);
-      ctx.fillStyle = '#FF0000';
-      ctx.shadowColor = '#FF0000';
-      ctx.shadowBlur = 10;
-      ctx.fill();
-
-      ctx.restore();
-    }
-
-    let lastT = 0;
-    (function loop(t){
-      const dt = Math.min(t - lastT, 50); lastT = t;
-      ctx.clearRect(0, 0, W, H);
-
-      // Trigger a glint every 2.5-4s when idle
-      idleTimer += dt;
-      if (!glintActive && idleTimer > (2500 + Math.random() * 1500)) {
-        glintActive = true;
-        glintProgress = 0;
-        idleTimer = 0;
-      }
-      if (glintActive) {
-        glintProgress += dt / 600; // ~600ms sweep
-        if (glintProgress >= 1) { glintActive = false; glintProgress = 0; }
-        else drawGlint(mx, my, glintProgress, 1);
-      }
-
-      drawCursor(mx, my);
-      requestAnimationFrame(loop);
-    })(0);
-  })();
 
   // ── SCROLL REVEAL ──
   const obs=new IntersectionObserver((entries)=>{
