@@ -1130,16 +1130,7 @@
     let W, H, mx = 0, my = 0, lx = 0, ly = 0;
     const sparkles = [];
 
-    // Neon color palette
-    const COLORS = [
-      '#ffffff', '#ffffff', '#ffffff',   // white (more frequent)
-      '#ff0044', '#ff3366',              // red/pink
-      '#ff6600', '#ffaa00',              // orange
-      '#00ffcc', '#00eeff',              // cyan
-      '#cc44ff', '#ff44ff',              // purple/magenta
-    ];
-
-    function randColor(){ return COLORS[Math.floor(Math.random()*COLORS.length)]; }
+    function randColor(){ return '#ffffff'; }
 
     function spawnSparkle(spread){
       sparkles.push({
@@ -1189,7 +1180,7 @@
     function drawStar(s){
       ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.rot);
       ctx.globalAlpha = s.alpha;
-      ctx.shadowColor = s.color; ctx.shadowBlur = 10;
+      ctx.shadowColor = '#ffffff'; ctx.shadowBlur = 24;
       ctx.beginPath();
       const r1=s.size, r2=s.size*0.2;
       for(let i=0;i<4;i++){
@@ -1199,10 +1190,14 @@
         ctx.lineTo(Math.cos(ia)*r2,Math.sin(ia)*r2);
       }
       ctx.closePath();
-      ctx.fillStyle = s.color; ctx.fill();
-      // Second pass for extra bloom
-      ctx.globalAlpha = s.alpha * 0.4;
-      ctx.shadowBlur = 20;
+      ctx.fillStyle = '#ffffff'; ctx.fill();
+      // Bloom pass 1
+      ctx.globalAlpha = s.alpha * 0.6;
+      ctx.shadowBlur = 40;
+      ctx.fill();
+      // Bloom pass 2 — wide halo
+      ctx.globalAlpha = s.alpha * 0.25;
+      ctx.shadowBlur = 80;
       ctx.fill();
       ctx.restore();
     }
