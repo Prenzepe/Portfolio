@@ -9,9 +9,18 @@
     "I take commissions seriously. You'll get clean, readable code with zero \"we'll fix it later\" logic. Whether it's one tight feature or an entire game framework, <strong>I ship it right the first time</strong>."
   ],
   "stats": [
-    { "value": "50+", "label": "Projects Shipped" },
-    { "value": "3+",  "label": "Years Luau" },
-    { "value": "0",   "label": "Refunds" }
+    {
+      "value": "50+",
+      "label": "Projects Shipped"
+    },
+    {
+      "value": "4+",
+      "label": "Years Luau"
+    },
+    {
+      "value": "0",
+      "label": "Refunds"
+    }
   ],
   "projects": {
     "featured": [],
@@ -21,5 +30,65 @@
     "filename": "CombatSystem.lua — ServerScript",
     "raw": "-- // PRENZE — CombatService (server-authoritative)\n\nlocal CombatService = {}\nCombatService.__index = CombatService\n\nlocal Settings = { Damage = 25, Cooldown = 0.6, Range = 10 }\n\nfunction CombatService.New(Config: table): table\n\treturn setmetatable({\n\t\t_Config    = setmetatable(Config or {}, { __index = Settings }),\n\t\t_Cooldowns = {},\n\t}, CombatService)\nend\n\nfunction CombatService:ProcessHit(Attacker: Model, Target: Model): boolean\n\tlocal Now = workspace:GetServerTimeNow()\n\tif (Now - (self._Cooldowns[Attacker] or 0)) < self._Config.Cooldown then return false end\n\tif (Attacker.HumanoidRootPart.Position - Target.HumanoidRootPart.Position).Magnitude > self._Config.Range then return false end\n\n\tTarget:FindFirstChildWhichIsA(\"Humanoid\"):TakeDamage(self._Config.Damage)\n\tself._Cooldowns[Attacker] = Now\n\treturn true\nend\n\nreturn CombatService",
     "html": "<span class=\"ln\">01</span><span class=\"cm\">-- // PRENZE — CombatService (server-authoritative)</span>\n<span class=\"ln\">02</span>\n<span class=\"ln\">03</span><span class=\"kw\">local</span> CombatService = {}\n<span class=\"ln\">04</span>CombatService.__index = CombatService\n<span class=\"ln\">05</span>\n<span class=\"ln\">06</span><span class=\"kw\">local</span> Settings = { Damage = 25, Cooldown = 0.6, Range = 10 }\n<span class=\"ln\">07</span>\n<span class=\"ln\">08</span><span class=\"kw\">function</span> <span class=\"fn\">CombatService.New</span>(Config: table): table\n<span class=\"ln\">09</span>\t<span class=\"kw\">return</span> setmetatable({\n<span class=\"ln\">10</span>\t\t_Config    = setmetatable(Config <span class=\"kw\">or</span> {}, { __index = Settings }),\n<span class=\"ln\">11</span>\t\t_Cooldowns = {},\n<span class=\"ln\">12</span>\t}, CombatService)\n<span class=\"ln\">13</span><span class=\"kw\">end</span>\n<span class=\"ln\">14</span>\n<span class=\"ln\">15</span><span class=\"kw\">function</span> CombatService:ProcessHit(Attacker: Model, Target: Model): boolean\n<span class=\"ln\">16</span>\t<span class=\"kw\">local</span> Now = workspace:GetServerTimeNow()\n<span class=\"ln\">17</span>\t<span class=\"kw\">if</span> (Now - (<span class=\"kw\">self</span>._Cooldowns[Attacker] <span class=\"kw\">or</span> 0)) &lt; <span class=\"kw\">self</span>._Config.Cooldown <span class=\"kw\">then</span> <span class=\"kw\">return</span> <span class=\"kw\">false</span> <span class=\"kw\">end</span>\n<span class=\"ln\">18</span>\t<span class=\"kw\">if</span> (<span class=\"fn\">Attacker.HumanoidRootPart.Position</span> - <span class=\"fn\">Target.HumanoidRootPart.Position</span>).Magnitude &gt; <span class=\"kw\">self</span>._Config.Range <span class=\"kw\">then</span> <span class=\"kw\">return</span> <span class=\"kw\">false</span> <span class=\"kw\">end</span>\n<span class=\"ln\">19</span>\n<span class=\"ln\">20</span>\tTarget:FindFirstChildWhichIsA(<span class=\"str\">\"Humanoid\"</span>):TakeDamage(<span class=\"kw\">self</span>._Config.Damage)\n<span class=\"ln\">21</span>\t<span class=\"kw\">self</span>._Cooldowns[Attacker] = Now\n<span class=\"ln\">22</span>\t<span class=\"kw\">return</span> <span class=\"kw\">true</span>\n<span class=\"ln\">23</span><span class=\"kw\">end</span>\n<span class=\"ln\">24</span>\n<span class=\"ln\">25</span><span class=\"kw\">return</span> CombatService"
-  }
+  },
+  "services": [
+    {
+      "name": "Game System Scripting",
+      "desc": "Combat · Inventory · Quests · Abilities"
+    },
+    {
+      "name": "Data & Save Systems",
+      "desc": "ProfileService · DataStore2 · Migration"
+    },
+    {
+      "name": "UI / GUI Scripting",
+      "desc": "Animated · Responsive · Mobile-ready"
+    },
+    {
+      "name": "Anti-Exploit Systems",
+      "desc": "Server-side · Sanity checks · Rate limiting"
+    },
+    {
+      "name": "Script Debugging & Optimisation",
+      "desc": "Performance · Memory · Legacy rewrites"
+    }
+  ],
+  "expertise": [
+    {
+      "icon": "⚡",
+      "tag": "SYS::LUAU",
+      "name": "Lua / Luau",
+      "desc": "Native Luau scripting — typed code, clean module patterns, performance-optimized loops, and zero tolerance for memory leaks."
+    },
+    {
+      "icon": "🔁",
+      "tag": "SYS::NET",
+      "name": "Server–Client",
+      "desc": "Rock-solid RemoteEvent and RemoteFunction architecture. Server-authoritative logic with client-side prediction where it matters."
+    },
+    {
+      "icon": "💾",
+      "tag": "SYS::DATA",
+      "name": "Data Systems",
+      "desc": "DataStore2, ProfileService, session locking, auto-save, migration handling — player data that never corrupts or gets lost."
+    },
+    {
+      "icon": "🎮",
+      "tag": "SYS::GAME",
+      "name": "Game Systems",
+      "desc": "Combat, inventory, quests, abilities, round managers, leaderboards — complete, interconnected systems built from scratch."
+    },
+    {
+      "icon": "🖥️",
+      "tag": "SYS::UI",
+      "name": "UI / UX Scripting",
+      "desc": "Fluid animated GUIs with tweening, responsive layouts, reactive state, and smooth transitions that feel genuinely polished."
+    },
+    {
+      "icon": "🛡️",
+      "tag": "SYS::SEC",
+      "name": "Anti-Exploit",
+      "desc": "Server-side sanity checks, rate limiting, client validation, and custom kick systems that actually catch cheaters."
+    }
+  ]
 }
