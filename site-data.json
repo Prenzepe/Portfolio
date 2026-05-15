@@ -4,6 +4,15 @@
   "pricingRobux": 10000,
   "announcement": null,
   "announcementExpiry": null,
+  "aboutText": [
+    "I got into Roblox scripting because I wanted to build things that actually felt good to play. That curiosity turned into a serious craft — <strong>server-authoritative combat systems</strong>, persistent data layers, fluid UIs — all written in Luau that scales as your game grows.",
+    "I take commissions seriously. You'll get clean, readable code with zero \"we'll fix it later\" logic. Whether it's one tight feature or an entire game framework, <strong>I ship it right the first time</strong>."
+  ],
+  "stats": [
+    { "value": "50+", "label": "Projects Shipped" },
+    { "value": "3+",  "label": "Years Luau" },
+    { "value": "0",   "label": "Refunds" }
+  ],
   "projects": {
     "featured": [],
     "gallery": []
