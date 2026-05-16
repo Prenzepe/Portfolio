@@ -589,17 +589,6 @@
   .stat:hover::after { transform: scaleX(1); }
 
   /* ── SITE EDITOR PANEL ── */
-  #editor-toggle {
-    position: fixed; bottom: 28px; right: 28px; z-index: 8000;
-    width: 48px; height: 48px; border-radius: 50%;
-    background: var(--red); border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 0 20px rgba(255,0,0,0.5), 0 4px 20px rgba(0,0,0,0.6);
-    transition: transform 0.2s, box-shadow 0.2s;
-    font-size: 1.1rem;
-  }
-  #editor-toggle:hover { transform: scale(1.1); box-shadow: 0 0 30px rgba(255,0,0,0.7); }
-
   #editor-panel {
     position: fixed; top: 0; right: -480px; bottom: 0; width: 460px; z-index: 7999;
     background: #0a0000; border-left: 1px solid rgba(255,0,0,0.2);
@@ -1001,6 +990,32 @@
   .featured-first { grid-column: span 2; }
   @media(max-width:768px) { .featured-first { grid-column: span 1; } }
   .projects-loading { font-family: 'Share Tech Mono', monospace; font-size: .7rem; letter-spacing: 3px; color: rgba(255,0,0,0.3); padding: 40px 0; }
+
+  /* ── CODE COLLAPSE ── */
+  .code-collapse-wrap { position: relative; }
+  .code-collapse-wrap.collapsed pre {
+    max-height: 520px; /* ~20 lines */
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  }
+  .code-expand-btn {
+    width: 100%; background: rgba(255,0,0,0.04);
+    border: none; border-top: 1px solid rgba(255,0,0,0.15);
+    color: rgba(255,255,255,0.35); font-family: 'Share Tech Mono', monospace;
+    font-size: .62rem; letter-spacing: 3px; padding: 13px 20px;
+    cursor: pointer; text-transform: uppercase;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: color .25s, background .25s;
+  }
+  .code-expand-btn:hover { color: var(--red); background: rgba(255,0,0,0.07); }
+  .code-expand-btn .btn-caret {
+    display: inline-block;
+    transition: transform .3s ease;
+    font-style: normal;
+    margin-left: 6px; /* extra space before caret */
+  }
+  .code-expand-btn.expanded .btn-caret { transform: rotate(180deg); }
 </style>
 </head>
 <body>
@@ -1118,6 +1133,7 @@
       <div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div>
       <span class="code-filename" id="code-filename">CombatSystem.lua — ServerScript</span>
     </div>
+    <div class="code-collapse-wrap collapsed" id="code-collapse-wrap">
     <pre id="code-pre"><span class="ln">01</span><span class="cm">-- // PRENZE — Combat Module  (server-authoritative)</span>
 <span class="ln">02</span>
 <span class="ln">03</span><span class="kw">local</span> Players    = game:<span class="fn">GetService</span>(<span class="str">"Players"</span>)
@@ -1140,6 +1156,10 @@
 <span class="ln">20</span><span class="kw">end</span>
 <span class="ln">21</span>
 <span class="ln">22</span><span class="kw">return</span> Combat <span class="typing-cursor"></span></pre>
+    <button class="code-expand-btn" id="code-expand-btn" onclick="toggleCodeExpand()">
+      [ Show All Lines ] <span class="btn-caret">&#9660;</span>
+    </button>
+    </div>
   </div>
 </div>
 
@@ -1280,9 +1300,6 @@
   <div class="footer-logo"><span>P</span>RENZE</div>
   <div class="footer-copy">© 2026 PRENZE — ALL SCRIPTS OPERATIONAL</div>
 </footer>
-
-<!-- EDITOR TOGGLE -->
-<button id="editor-toggle" title="Edit Site Content">✏️</button>
 
 <!-- EDITOR PANEL -->
 <div id="editor-panel">
@@ -1802,10 +1819,13 @@
 
     // ── Panel open/close ──
     const panel = document.getElementById('editor-panel');
-    document.getElementById('editor-toggle').addEventListener('click', () => {
-      panel.classList.toggle('open');
-      if (panel.classList.contains('open')) refreshAll();
-    });
+    const editorToggleBtn = document.getElementById('editor-toggle');
+    if (editorToggleBtn) {
+      editorToggleBtn.addEventListener('click', () => {
+        panel.classList.toggle('open');
+        if (panel.classList.contains('open')) refreshAll();
+      });
+    }
     document.getElementById('ep-close-btn').addEventListener('click', () => panel.classList.remove('open'));
 
     // ── Tabs ──
@@ -2101,6 +2121,18 @@
     if (savedExpert)   applyExpertiseEditor(JSON.parse(savedExpert));
 
   })();
+
+  // ── CODE EXPAND / COLLAPSE ──
+  function toggleCodeExpand() {
+    const wrap = document.getElementById('code-collapse-wrap');
+    const btn  = document.getElementById('code-expand-btn');
+    const isCollapsed = wrap.classList.contains('collapsed');
+    wrap.classList.toggle('collapsed', !isCollapsed);
+    btn.classList.toggle('expanded', isCollapsed);
+    btn.innerHTML = isCollapsed
+      ? '[ Collapse ] <span class="btn-caret expanded" style="display:inline-block;transform:rotate(180deg);margin-left:6px;">&#9660;</span>'
+      : '[ Show All Lines ] <span class="btn-caret" style="display:inline-block;margin-left:6px;">&#9660;</span>';
+  }
 </script>
 </body>
 </html>
