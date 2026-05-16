@@ -29,16 +29,46 @@
   html { scroll-behavior:smooth; }
   body { background:#000; color:var(--white); font-family:'Rajdhani',sans-serif; overflow-x:hidden; }
 
-  /* HAMBURGER — removed, flat nav always */
-  .hamburger { display: none !important; }
+  /* HAMBURGER */
+  .hamburger {
+    display: none;
+    flex-direction: column; justify-content: center; gap: 5px;
+    background: none; border: none; cursor: pointer; padding: 6px; z-index: 200;
+  }
+  .hamburger span {
+    display: block; width: 22px; height: 2px;
+    background: var(--white);
+    transition: transform .3s ease, opacity .3s ease;
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* Mobile nav overlay */
+  .nav-overlay {
+    display: none; position: fixed; inset: 0; z-index: 98;
+    background: rgba(0,0,0,0.55); backdrop-filter: blur(2px);
+  }
+  .nav-overlay.open { display: block; }
+
   @media(max-width:768px) {
     nav { padding: 16px 20px; }
-    .nav-links { display: flex !important; gap: 18px; }
-    .nav-links a { font-size: .6rem; letter-spacing: 2px; }
+    .hamburger { display: flex; }
+    .nav-links {
+      position: fixed; top: 0; right: -100%; bottom: 0;
+      width: 72vw; max-width: 260px;
+      background: rgba(4,0,0,0.98); border-left: 1px solid rgba(255,0,0,0.18);
+      flex-direction: column; align-items: flex-start; gap: 0;
+      padding: 84px 28px 32px; list-style: none;
+      z-index: 99; transition: right .35s cubic-bezier(.22,1,.36,1);
+      backdrop-filter: blur(20px);
+    }
+    .nav-links.open { right: 0; }
+    .nav-links li { width: 100%; border-bottom: 1px solid rgba(255,0,0,0.08); }
+    .nav-links a { display: block; font-size: .72rem; letter-spacing: 3px; padding: 15px 0; }
   }
   @media(max-width:480px) {
-    .nav-links { gap: 10px; }
-    .nav-links a { font-size: .52rem; letter-spacing: 1px; }
+    .nav-links a { font-size: .65rem; letter-spacing: 2px; }
   }
 
   /* NOISE */
@@ -531,7 +561,7 @@
   }
   @media(max-width:768px) {
     nav { padding:18px 20px; }
-    .nav-links { display:none; }
+    /* nav-links handled by hamburger JS above */
     section, #about, #projects, #contact, .code-section, #services { padding: 70px 18px; }
     #about { grid-template-columns: 1fr; gap: 40px; }
     .skills-grid { grid-template-columns: 1fr; }
@@ -1024,20 +1054,25 @@
 <div class="orb orb2"></div>
 
 <!-- NAV -->
+<div class="nav-overlay" id="nav-overlay"></div>
 <nav>
   <a class="nav-logo" href="#">
     <span>P</span>RENZE
     <span class="nav-status-dot" id="nav-status-dot" title="Open for work"></span>
   </a>
-  
+
   <ul class="nav-links" id="nav-links">
-    <li><a href="#about">About</a></li>
-    <li><a href="#skills">Skills</a></li>
-    <li><a href="#projects">Work</a></li>
-    <li><a href="#pricing">Pricing</a></li>
-    <li><a href="#services">Services</a></li>
-    <li><a href="#contact">Contact</a></li>
+    <li><a href="#about"    onclick="closeNav()">About</a></li>
+    <li><a href="#skills"   onclick="closeNav()">Skills</a></li>
+    <li><a href="#projects" onclick="closeNav()">Work</a></li>
+    <li><a href="#pricing"  onclick="closeNav()">Pricing</a></li>
+    <li><a href="#services" onclick="closeNav()">Services</a></li>
+    <li><a href="#contact"  onclick="closeNav()">Contact</a></li>
   </ul>
+
+  <button class="hamburger" id="hamburger" aria-label="Menu" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <!-- ANNOUNCEMENT BANNER -->
@@ -1134,28 +1169,7 @@
       <span class="code-filename" id="code-filename">CombatSystem.lua — ServerScript</span>
     </div>
     <div class="code-collapse-wrap collapsed" id="code-collapse-wrap">
-    <pre id="code-pre"><span class="ln">01</span><span class="cm">-- // PRENZE — Combat Module  (server-authoritative)</span>
-<span class="ln">02</span>
-<span class="ln">03</span><span class="kw">local</span> Players    = game:<span class="fn">GetService</span>(<span class="str">"Players"</span>)
-<span class="ln">04</span><span class="kw">local</span> RunService = game:<span class="fn">GetService</span>(<span class="str">"RunService"</span>)
-<span class="ln">05</span><span class="kw">local</span> Combat     = {}
-<span class="ln">06</span>
-<span class="ln">07</span><span class="kw">local</span> DAMAGE    = 25
-<span class="ln">08</span><span class="kw">local</span> COOLDOWN  = 0.6
-<span class="ln">09</span><span class="kw">local</span> MAX_RANGE = 10
-<span class="ln">10</span>
-<span class="ln">11</span><span class="kw">function</span> <span class="fn">Combat.HandleHit</span>(attacker, target)
-<span class="ln">12</span>    <span class="kw">if not</span> <span class="fn">IsValid</span>(attacker, target) <span class="kw">then return end</span>
-<span class="ln">13</span>    <span class="kw">if</span> <span class="fn">GetDistance</span>(attacker, target) > MAX_RANGE <span class="kw">then return end</span>
-<span class="ln">14</span>
-<span class="ln">15</span>    <span class="kw">local</span> hum = target:<span class="fn">FindFirstChild</span>(<span class="str">"Humanoid"</span>)
-<span class="ln">16</span>    <span class="kw">if</span> hum <span class="kw">and</span> hum.Health > 0 <span class="kw">then</span>
-<span class="ln">17</span>        hum.Health -= DAMAGE
-<span class="ln">18</span>        <span class="fn">ApplyCooldown</span>(attacker, COOLDOWN)
-<span class="ln">19</span>    <span class="kw">end</span>
-<span class="ln">20</span><span class="kw">end</span>
-<span class="ln">21</span>
-<span class="ln">22</span><span class="kw">return</span> Combat <span class="typing-cursor"></span></pre>
+    <pre id="code-pre"></pre>
     <button class="code-expand-btn" id="code-expand-btn" onclick="toggleCodeExpand()">
       [ Show All Lines ] <span class="btn-caret">&#9660;</span>
     </button>
@@ -1356,6 +1370,155 @@
 <div id="ep-toast" class="ep-toast">Saved!</div>
 
 <script>
+
+  // ══════════════════════════════════════════════════════
+  // AVAILABILITY STATUS
+  // Change this one line: 'open' | 'busy' | 'closed'
+  // ══════════════════════════════════════════════════════
+  const SITE_STATUS = 'closed';
+
+  const STATUS_CONFIG = {
+    open:   { text: 'OPEN FOR WORK',           pulse: '',       card: 'status-open',   dot: '',       hero: '[ ROBLOX_SCRIPTER // ONLINE ]'  },
+    busy:   { text: 'BUSY — LIMITED SLOTS',    pulse: 'busy',   card: 'status-busy',   dot: 'busy',   hero: '[ ROBLOX_SCRIPTER // BUSY ]'    },
+    closed: { text: 'CLOSED — DM TO WAIT LIST',pulse: 'closed', card: 'status-closed', dot: 'closed', hero: '[ ROBLOX_SCRIPTER // CLOSED ]'  },
+  };
+
+  (function applyStatus() {
+    const cfg = STATUS_CONFIG[SITE_STATUS] || STATUS_CONFIG.closed;
+    const card  = document.getElementById('avail-card');
+    const pulse = document.getElementById('avail-pulse');
+    const txt   = document.getElementById('avail-status-text');
+    const dot   = document.getElementById('nav-status-dot');
+    const hero  = document.querySelector('.hero-tag');
+    if (card)  card.className  = 'avail-card reveal ' + cfg.card;
+    if (pulse) pulse.className = 'avail-pulse ' + cfg.pulse;
+    if (txt)   txt.textContent = cfg.text;
+    if (dot)   { dot.className = 'nav-status-dot ' + cfg.dot; dot.title = cfg.text; }
+    if (hero)  hero.textContent = cfg.hero;
+  })();
+
+  // ══════════════════════════════════════════════════════
+  // CODE SAMPLE — edit CODE_SAMPLE to change what shows
+  // ══════════════════════════════════════════════════════
+  const CODE_SAMPLE = {
+    filename: 'CombatSystem.lua — ServerScript',
+    code: `-- // PRENZE — Combat Module  (server-authoritative)
+
+local Players    = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Combat     = {}
+
+local DAMAGE    = 25
+local COOLDOWN  = 0.6
+local MAX_RANGE = 10
+
+function Combat.HandleHit(attacker, target)
+    if not IsValid(attacker, target) then return end
+    if GetDistance(attacker, target) > MAX_RANGE then return end
+
+    local hum = target:FindFirstChild("Humanoid")
+    if hum and hum.Health > 0 then
+        hum.Health -= DAMAGE
+        ApplyCooldown(attacker, COOLDOWN)
+    end
+end
+
+return Combat`
+  };
+
+  const LUA_KEYWORDS = new Set([
+    'local','function','end','if','then','else','elseif','and','or','not',
+    'return','for','do','while','repeat','until','in','break','true','false','nil'
+  ]);
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function highlightLua(code) {
+    let out = '', i = 0;
+    while (i < code.length) {
+      // Line comment
+      if (code[i] === '-' && code[i+1] === '-') {
+        const end = code.indexOf('\n', i);
+        const to  = end === -1 ? code.length : end;
+        out += `<span class="cm">${escHtml(code.slice(i, to))}</span>`;
+        i = to; continue;
+      }
+      // String literal
+      if (code[i] === '"' || code[i] === "'") {
+        const q = code[i]; let j = i + 1;
+        while (j < code.length && code[j] !== q) { if (code[j] === '\\') j++; j++; }
+        j++;
+        out += `<span class="str">${escHtml(code.slice(i, j))}</span>`;
+        i = j; continue;
+      }
+      // Identifier / keyword / function call
+      if (/[a-zA-Z_]/.test(code[i])) {
+        let j = i;
+        while (j < code.length && /[a-zA-Z0-9_]/.test(code[j])) j++;
+        const word = code.slice(i, j);
+        let k = j; while (k < code.length && code[k] === ' ') k++;
+        if (LUA_KEYWORDS.has(word)) {
+          out += `<span class="kw">${escHtml(word)}</span>`;
+        } else if (code[k] === '(') {
+          out += `<span class="fn">${escHtml(word)}</span>`;
+        } else {
+          out += escHtml(word);
+        }
+        i = j; continue;
+      }
+      // Number
+      if (/[0-9]/.test(code[i])) {
+        let j = i;
+        while (j < code.length && /[0-9.]/.test(code[j])) j++;
+        out += `<span class="str">${escHtml(code.slice(i, j))}</span>`;
+        i = j; continue;
+      }
+      out += escHtml(code[i]); i++;
+    }
+    return out;
+  }
+
+  (function renderCodeSample() {
+    const { filename, code } = CODE_SAMPLE;
+    document.getElementById('code-filename').textContent = filename;
+    const lines = code.split('\n');
+    const hLines = highlightLua(code).split('\n');
+    const pre = document.getElementById('code-pre');
+    pre.innerHTML = hLines.map((line, i) =>
+      `<span class="ln">${String(i+1).padStart(2,'0')}</span>${line}`
+    ).join('\n') + ' <span class="typing-cursor"></span>';
+
+    // Auto-collapse only if over 20 lines
+    const wrap = document.getElementById('code-collapse-wrap');
+    const btn  = document.getElementById('code-expand-btn');
+    if (lines.length <= 20) {
+      wrap.classList.remove('collapsed');
+      btn.style.display = 'none';
+    }
+  })();
+
+  // ══════════════════════════════════════════════════════
+  // MOBILE NAV
+  // ══════════════════════════════════════════════════════
+  function toggleNav() {
+    const links   = document.getElementById('nav-links');
+    const burger  = document.getElementById('hamburger');
+    const overlay = document.getElementById('nav-overlay');
+    const open    = links.classList.toggle('open');
+    burger.classList.toggle('open', open);
+    overlay.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  function closeNav() {
+    document.getElementById('nav-links').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+    document.getElementById('nav-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('nav-overlay').addEventListener('click', closeNav);
+
   // ── PARTICLE DATA-STREAM CANVAS ──
   (function(){
     const canvas = document.getElementById('particle-canvas');
