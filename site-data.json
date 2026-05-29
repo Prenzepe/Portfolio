@@ -26,7 +26,7 @@
     "featured": [
       {
         "title": "Advanced Ragdoll",
-        "desc": "Advanced Ragdoll\nComplete with Ragdoll and Dragging/Velocity",
+        "desc": "Physics-Driven Character Ragdoll & Dragging System\n\nA robust Roblox **physics** framework that allows players to seamlessly transition characters into ragdoll states and interact with them in real time. Utilizing mouse-input vector tracking and dynamic physics constraints, players can fluidly drag, swing, and throw ragdolled rigs. The system is engineered to handle clean velocity transfer upon release, ensuring satisfying, momentum-based throwing mechanics.",
         "tags": [
           "Luau",
           "Combat"
