@@ -379,35 +379,45 @@
 
   /* PROJECTS */
   #projects { max-width:1200px; margin:0 auto; }
-  .projects-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:3px; }
+  .projects-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:18px; }
 
-  /* ── John-style 3D project cards ── */
+  /* ── Column-style featured cards ── */
   .project-card {
     position:relative;
-    aspect-ratio: 4/5;
+    border-radius:16px;
     overflow:hidden;
-    background:#080000;
+    background: linear-gradient(145deg, #0d0000, #050000);
+    border:1px solid rgba(255,0,0,0.18);
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding:32px 24px 26px;
+    gap:14px;
+    text-align:center;
     transform-style:preserve-3d;
     perspective:1000px;
-    cursor:pointer;
-    transition: transform 0.4s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s ease;
+    transition: transform 0.4s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s ease, border-color 0.3s;
     will-change:transform;
   }
-  .project-card:nth-child(1) { grid-column:span 2; aspect-ratio: 16/7; }
+  .project-card:nth-child(1) { grid-column: unset; aspect-ratio: unset; }
   .project-card:hover {
-    box-shadow: 0 30px 80px rgba(255,0,0,0.25), 0 0 0 1px rgba(255,0,0,0.2);
+    box-shadow: 0 24px 60px rgba(255,0,0,0.22), 0 0 0 1px rgba(255,0,0,0.3);
+    border-color: rgba(255,0,0,0.4);
     z-index:10;
   }
 
   /* shimmer on hover */
   .project-card::before {
-    content:''; position:absolute; inset:0;
+    content:''; position:absolute; inset:0; border-radius:16px;
     background:linear-gradient(135deg, rgba(255,0,0,0.07) 0%, transparent 60%);
     z-index:1; opacity:0; transition:opacity 0.4s ease;
+    pointer-events:none;
   }
   .project-card:hover::before { opacity:1; }
 
-  /* card visual layer — fills card, clips shapes */
+  /* card visual layer */
   .card-visual {
     width:100%; height:100%;
     display:flex; align-items:center; justify-content:center;
@@ -463,33 +473,25 @@
   @keyframes pcSlideH { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
   @keyframes pcPulseA { 0%,100%{transform:translate(-50%,-50%) scale(1);opacity:1} 50%{transform:translate(-50%,-50%) scale(1.3);opacity:.4} }
 
-  /* card info overlay */
-  .card-info {
-    position:absolute; bottom:0; left:0; right:0;
-    padding:28px 24px;
-    background:linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 60%, transparent 100%);
-    z-index:2;
-    transform:translateY(8px);
-    transition:transform 0.4s ease;
-  }
-  .project-card:hover .card-info { transform:translateY(0); }
+  /* card info — static column layout */
+  .card-info { display: contents; }
 
-  .project-num { font-family:'Bebas Neue',sans-serif; font-size:5rem; color:rgba(255,0,0,0.06); position:absolute; top:16px; right:20px; line-height:1; pointer-events:none; z-index:3; }
-  .project-tag { font-family:'Share Tech Mono',monospace; font-size:.6rem; letter-spacing:4px; color:var(--red); text-transform:uppercase; margin-bottom:8px; display:block; }
-  .project-title { font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:3px; margin-bottom:10px; display:block; line-height:1; }
-  .project-desc { font-size:.88rem; line-height:1.7; color:rgba(255,255,255,0.55); max-width:520px; margin-bottom:16px; display:block; }
-  .project-tags { display:flex; flex-wrap:wrap; gap:6px; }
-  .ptag { font-family:'Share Tech Mono',monospace; font-size:.6rem; letter-spacing:2px; padding:5px 10px; border:1px solid rgba(255,0,0,0.25); color:rgba(255,255,255,0.45); text-transform:uppercase; transition:border-color .3s,color .3s; }
+  .project-num { display:none; }
+  .project-tag { font-family:'Share Tech Mono',monospace; font-size:.58rem; letter-spacing:4px; color:var(--red); text-transform:uppercase; display:block; order:-1; }
+  .project-title { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:2px; display:block; line-height:1.1; color:var(--white); }
+  .project-desc { font-size:.82rem; line-height:1.65; color:rgba(255,255,255,0.5); display:block; }
+  .project-tags { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:2px; }
+  .ptag { font-family:'Share Tech Mono',monospace; font-size:.58rem; letter-spacing:2px; padding:4px 9px; border:1px solid rgba(255,0,0,0.25); color:rgba(255,255,255,0.45); text-transform:uppercase; transition:border-color .3s,color .3s; }
   .project-card:hover .ptag { border-color:rgba(255,0,0,0.5); color:var(--white); }
 
-  /* red glow line on left edge */
+  /* red glow bottom edge on hover */
   .project-card::after {
-    content:''; position:absolute; left:0; bottom:0; top:0; width:2px;
-    background:linear-gradient(to bottom, transparent, var(--red), transparent);
-    transform:scaleY(0); transform-origin:bottom;
-    transition:transform .4s ease; z-index:5;
+    content:''; position:absolute; bottom:0; left:10%; right:10%; height:1px;
+    background:linear-gradient(90deg, transparent, var(--red), transparent);
+    transform:scaleX(0); transform-origin:center;
+    transition:transform .4s ease; z-index:5; border-radius:0 0 16px 16px;
   }
-  .project-card:hover::after { transform:scaleY(1); }
+  .project-card:hover::after { transform:scaleX(1); }
 
   /* SERVICES — FIX: remove purple visited/link color */
   #services { background:rgba(255,0,0,0.02); border-top:1px solid rgba(255,0,0,0.08); padding:120px 60px; }
@@ -565,8 +567,8 @@
     section, #about, #projects, #contact, .code-section, #services { padding: 70px 18px; }
     #about { grid-template-columns: 1fr; gap: 40px; }
     .skills-grid { grid-template-columns: 1fr; }
-    .projects-grid { grid-template-columns: 1fr; }
-    .project-card:nth-child(1) { grid-column: span 1; }
+    .projects-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .project-card:nth-child(1) { grid-column: unset; }
     .stats { grid-template-columns: repeat(3,1fr); gap: 12px; }
     .stat { padding: 18px 10px; }
     .stat-num { font-size: 2.2rem; }
@@ -581,9 +583,8 @@
     .hero-cta { padding: 12px 30px; font-size: .7rem; }
     .contact-links { flex-direction: column; align-items: center; }
     .contact-btn { width: 100%; max-width: 320px; text-align: center; }
-    .project-card { padding: 28px 22px; }
-    .project-title { font-size: 1.7rem; }
-    .project-desc { font-size: .88rem; }
+    .project-title { font-size: 1.3rem; }
+    .project-desc { font-size: .8rem; }
     footer { flex-direction: column; gap: 10px; text-align: center; padding: 24px 20px; }
   }
   @media(max-width:480px) {
@@ -1015,7 +1016,7 @@
   @media(max-width:768px) { .roblox-profile-btn { width: 100%; max-width: 320px; justify-content: center; } }
 
   /* Project icon inside card */
-  .project-icon-wrap { width: 56px; height: 56px; margin-bottom: 18px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,0,0,0.2); background: rgba(255,0,0,0.05); }
+  .project-icon-wrap { width: 72px; height: 72px; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,0,0,0.25); background: rgba(255,0,0,0.06); flex-shrink:0; }
   .project-icon-img { width: 100%; height: 100%; object-fit: cover; }
   .featured-first { grid-column: span 2; }
   @media(max-width:768px) { .featured-first { grid-column: span 1; } }
@@ -1798,14 +1799,15 @@ return Combat`
       return;
     }
     grid.innerHTML = projects.map((p, i) => `
-      <div class="project-card reveal ${i === 0 ? 'featured-first' : ''}" data-project="${i}" style="cursor:pointer">
+      <div class="project-card reveal" data-project="${i}" style="cursor:pointer">
         <div class="glare"></div>
-        <div class="project-num">${String(i+1).padStart(2,'0')}</div>
-        ${p.icon ? `<div class="project-icon-wrap"><img src="${p.icon}" alt="${p.title}" class="project-icon-img"></div>` : ''}
-        <div class="project-tag">${p.tag}</div>
-        <div class="project-title">${p.title}</div>
-        <div class="project-desc">${p.desc}</div>
-        <div class="project-tags">${p.tags.map(t => `<span class="ptag">${t}</span>`).join('')}</div>
+        ${p.icon
+          ? `<div class="project-icon-wrap"><img src="${p.icon}" alt="${p.title}" class="project-icon-img"></div>`
+          : `<div class="project-icon-wrap" style="display:flex;align-items:center;justify-content:center;font-size:1.6rem">🎮</div>`
+        }
+        <span class="project-title">${p.title}</span>
+        <span class="project-desc">${(p.desc || '').split('\n')[0]}</span>
+        <div class="project-tags">${(p.tags||[]).map(t => `<span class="ptag">${t}</span>`).join('')}</div>
       </div>
     `).join('');
 
@@ -1858,13 +1860,36 @@ return Combat`
 
   function openModal(idx) {
     const p = PROJECTS[idx];
+    if (!p) return;
+
+    // Render media
     if (p.media) {
-      if (p.mediaType === 'video') {
-        mMedia.innerHTML = `<video src="${p.media}" autoplay loop muted playsinline></video>`;
+      const vimeoMatch = p.media.match(/vimeo\.com\/(\d+)/);
+      const ytMatch    = p.media.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/);
+
+      if (vimeoMatch) {
+        mMedia.style.position = 'relative';
+        mMedia.innerHTML = `<iframe
+          src="https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1&muted=1&loop=1&background=0&controls=1"
+          style="position:absolute;inset:0;width:100%;height:100%;border:none;"
+          allow="autoplay; fullscreen"
+          allowfullscreen></iframe>`;
+      } else if (ytMatch) {
+        mMedia.style.position = 'relative';
+        mMedia.innerHTML = `<iframe
+          src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&mute=1&loop=1&playlist=${ytMatch[1]}"
+          style="position:absolute;inset:0;width:100%;height:100%;border:none;"
+          allow="autoplay; fullscreen"
+          allowfullscreen></iframe>`;
+      } else if (p.mediaType === 'video' || /\.(mp4|webm|ogg)$/i.test(p.media)) {
+        mMedia.style.position = '';
+        mMedia.innerHTML = `<video src="${p.media}" autoplay loop muted playsinline controls style="width:100%;height:100%;object-fit:cover;"></video>`;
       } else {
-        mMedia.innerHTML = `<img src="${p.media}" alt="${p.title}">`;
+        mMedia.style.position = '';
+        mMedia.innerHTML = `<img src="${p.media}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;">`;
       }
     } else {
+      mMedia.style.position = '';
       mMedia.innerHTML = `
         <div class="modal-media-placeholder">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
@@ -1873,10 +1898,11 @@ return Combat`
           <span>Media coming soon</span>
         </div>`;
     }
-    mTag.textContent   = p.tag;
-    mTitle.textContent = p.title;
-    mDesc.textContent  = p.desc;
-    mTags.innerHTML    = p.tags.map(t => `<span class="ptag">${t}</span>`).join('');
+
+    mTag.textContent   = p.tag   || '';
+    mTitle.textContent = p.title || '';
+    mDesc.textContent  = p.desc  || '';
+    mTags.innerHTML    = (p.tags||[]).map(t => `<span class="ptag">${t}</span>`).join('');
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -1900,21 +1926,39 @@ return Combat`
   const galleryGrid = document.getElementById('gallery-grid');
 
   function buildGallery() {
-    galleryGrid.innerHTML = PROJECTS.map((p, i) => `
-      <div class="gallery-card" data-project="${i}" onclick="openModal(${i})">
+    galleryGrid.innerHTML = PROJECTS.map((p, i) => {
+      let mediaBg;
+      const vimeoMatch = (p.media || '').match(/vimeo\.com\/(\d+)/);
+      const ytMatch    = (p.media || '').match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/);
+
+      if (p.icon) {
+        // Always show icon as the card thumbnail — clean and consistent
+        mediaBg = `<img src="${p.icon}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+      } else if (vimeoMatch || ytMatch) {
+        // Hosted video — show a play icon placeholder (can't thumbnail without API)
+        mediaBg = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0a0000;">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="11" stroke="rgba(255,0,0,0.35)" stroke-width="1"/>
+            <path d="M9.5 7.5l7 4.5-7 4.5V7.5z" fill="rgba(255,0,0,0.6)"/>
+          </svg>
+        </div>`;
+      } else if (p.media && (p.mediaType === 'video' || /\.(mp4|webm|ogg)$/i.test(p.media))) {
+        mediaBg = `<video src="${p.media}" muted playsinline loop></video>`;
+      } else if (p.media) {
+        mediaBg = `<img src="${p.media}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+      } else {
+        mediaBg = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,0,0,0.15);font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:4px">${String(i+1).padStart(2,'0')}</div>`;
+      }
+
+      return `<div class="gallery-card" data-project="${i}" onclick="openModal(${i})">
         <div class="glare"></div>
-        ${p.media
-          ? (p.mediaType === 'video'
-              ? `<video src="${p.media}" muted playsinline loop></video>`
-              : `<img src="${p.media}" alt="${p.title}">`)
-          : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,0,0,0.15);font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:4px">${String(i+1).padStart(2,'0')}</div>`
-        }
+        ${mediaBg}
         <div class="gallery-card-overlay">
-          <div class="gallery-card-title">${p.title}</div>
-          <div class="gallery-card-tag">${p.tag}</div>
+          <div class="gallery-card-title">${p.title || ''}</div>
+          <div class="gallery-card-tag">${p.tag || ''}</div>
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
 
     galleryGrid.querySelectorAll('.gallery-card video').forEach(v => {
       v.parentElement.addEventListener('mouseenter', () => v.play());
