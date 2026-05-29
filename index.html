@@ -381,21 +381,18 @@
   #projects { max-width:1200px; margin:0 auto; }
   .projects-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:18px; }
 
-  /* ── Column-style featured cards ── */
+  /* ── Luxury product-style featured cards ── */
   .project-card {
     position:relative;
     border-radius:16px;
     overflow:hidden;
-    background: linear-gradient(145deg, #0d0000, #050000);
-    border:1px solid rgba(255,0,0,0.18);
+    background:#080000;
+    border:1px solid rgba(255,0,0,0.15);
     cursor:pointer;
     display:flex;
     flex-direction:column;
-    align-items:center;
-    justify-content:flex-start;
-    padding:32px 24px 26px;
-    gap:14px;
-    text-align:center;
+    align-items:stretch;
+    text-align:left;
     transform-style:preserve-3d;
     perspective:1000px;
     transition: transform 0.4s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s ease, border-color 0.3s;
@@ -403,28 +400,60 @@
   }
   .project-card:nth-child(1) { grid-column: unset; aspect-ratio: unset; }
   .project-card:hover {
-    box-shadow: 0 24px 60px rgba(255,0,0,0.22), 0 0 0 1px rgba(255,0,0,0.3);
+    box-shadow: 0 32px 80px rgba(255,0,0,0.25), 0 0 0 1px rgba(255,0,0,0.35);
     border-color: rgba(255,0,0,0.4);
     z-index:10;
+  }
+
+  /* big image area — fills top of card */
+  .project-icon-wrap {
+    width:100% !important;
+    height:200px;
+    border-radius:0 !important;
+    border:none !important;
+    background:#100000;
+    overflow:hidden;
+    flex-shrink:0;
+    position:relative;
+  }
+  .project-icon-img {
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+    transition: transform 0.6s cubic-bezier(0.23,1,0.32,1);
+    filter: brightness(0.92);
+  }
+  .project-card:hover .project-icon-img {
+    transform: scale(1.07);
+    filter: brightness(1);
+  }
+  /* gradient fade at bottom of image into text panel */
+  .project-icon-wrap::after {
+    content:'';
+    position:absolute; inset:0;
+    background: linear-gradient(to bottom, transparent 45%, rgba(0,0,0,0.6) 100%);
+    pointer-events:none;
+  }
+
+  /* text panel */
+  .project-card-body {
+    padding: 18px 22px 22px;
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+    background: linear-gradient(145deg, #0d0000, #060000);
+    border-top:1px solid rgba(255,0,0,0.1);
+    flex:1;
   }
 
   /* shimmer on hover */
   .project-card::before {
     content:''; position:absolute; inset:0; border-radius:16px;
-    background:linear-gradient(135deg, rgba(255,0,0,0.07) 0%, transparent 60%);
+    background:linear-gradient(135deg, rgba(255,0,0,0.06) 0%, transparent 55%);
     z-index:1; opacity:0; transition:opacity 0.4s ease;
     pointer-events:none;
   }
   .project-card:hover::before { opacity:1; }
-
-  /* card visual layer */
-  .card-visual {
-    width:100%; height:100%;
-    display:flex; align-items:center; justify-content:center;
-    position:relative; overflow:hidden;
-    transition:transform 0.6s cubic-bezier(0.23,1,0.32,1);
-  }
-  .project-card:hover .card-visual { transform:scale(1.04); }
 
   /* glare layer */
   .project-card .glare {
@@ -477,11 +506,11 @@
   .card-info { display: contents; }
 
   .project-num { display:none; }
-  .project-tag { font-family:'Share Tech Mono',monospace; font-size:.58rem; letter-spacing:4px; color:var(--red); text-transform:uppercase; display:block; order:-1; }
-  .project-title { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:2px; display:block; line-height:1.1; color:var(--white); }
-  .project-desc { font-size:.82rem; line-height:1.65; color:rgba(255,255,255,0.5); display:block; }
-  .project-tags { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:2px; }
-  .ptag { font-family:'Share Tech Mono',monospace; font-size:.58rem; letter-spacing:2px; padding:4px 9px; border:1px solid rgba(255,0,0,0.25); color:rgba(255,255,255,0.45); text-transform:uppercase; transition:border-color .3s,color .3s; }
+  .project-tag { font-family:'Share Tech Mono',monospace; font-size:.58rem; letter-spacing:4px; color:var(--red); text-transform:uppercase; display:block; }
+  .project-title { font-family:'Bebas Neue',sans-serif; font-size:1.55rem; letter-spacing:2px; display:block; line-height:1.1; color:var(--white); }
+  .project-desc { font-size:.82rem; line-height:1.65; color:rgba(255,255,255,0.45); display:block; }
+  .project-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+  .ptag { font-family:'Share Tech Mono',monospace; font-size:.58rem; letter-spacing:2px; padding:4px 9px; border:1px solid rgba(255,0,0,0.22); color:rgba(255,255,255,0.4); text-transform:uppercase; transition:border-color .3s,color .3s; }
   .project-card:hover .ptag { border-color:rgba(255,0,0,0.5); color:var(--white); }
 
   /* red glow bottom edge on hover */
@@ -489,7 +518,7 @@
     content:''; position:absolute; bottom:0; left:10%; right:10%; height:1px;
     background:linear-gradient(90deg, transparent, var(--red), transparent);
     transform:scaleX(0); transform-origin:center;
-    transition:transform .4s ease; z-index:5; border-radius:0 0 16px 16px;
+    transition:transform .4s ease; z-index:5;
   }
   .project-card:hover::after { transform:scaleX(1); }
 
@@ -1803,11 +1832,14 @@ return Combat`
         <div class="glare"></div>
         ${p.icon
           ? `<div class="project-icon-wrap"><img src="${p.icon}" alt="${p.title}" class="project-icon-img"></div>`
-          : `<div class="project-icon-wrap" style="display:flex;align-items:center;justify-content:center;font-size:1.6rem">🎮</div>`
+          : `<div class="project-icon-wrap" style="display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:rgba(255,0,0,0.2);">🎮</div>`
         }
-        <span class="project-title">${p.title}</span>
-        <span class="project-desc">${(p.desc || '').split('\n')[0]}</span>
-        <div class="project-tags">${(p.tags||[]).map(t => `<span class="ptag">${t}</span>`).join('')}</div>
+        <div class="project-card-body">
+          <span class="project-tag">${p.tag || ''}</span>
+          <span class="project-title">${p.title}</span>
+          <span class="project-desc">${(p.desc || '').split('\n')[0]}</span>
+          <div class="project-tags">${(p.tags||[]).map(t => `<span class="ptag">${t}</span>`).join('')}</div>
+        </div>
       </div>
     `).join('');
 
