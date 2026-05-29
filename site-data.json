@@ -23,7 +23,20 @@
     }
   ],
   "projects": {
-    "featured": [],
+    "featured": [
+      {
+        "title": "Advanced Ragdoll",
+        "desc": "Advanced Ragdoll\nComplete with Ragdoll and Dragging/Velocity",
+        "tags": [
+          "Luau",
+          "Combat"
+        ],
+        "tag": "Game Systems",
+        "icon": "https://i.imgur.com/1iJqZRw.jpeg",
+        "media": "https://vimeo.com/1196621155?fl=ip&fe=ec",
+        "mediaType": "video"
+      }
+    ],
     "gallery": []
   },
   "codeSnippet": {
