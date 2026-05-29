@@ -379,7 +379,7 @@
 
   /* PROJECTS */
   #projects { max-width:1200px; margin:0 auto; }
-  .projects-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:18px; }
+  .projects-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:22px; }
 
   /* ── Luxury product-style featured cards ── */
   .project-card {
@@ -393,14 +393,22 @@
     flex-direction:column;
     align-items:stretch;
     text-align:left;
+    width:328px;
+    min-height:590px;
     transform-style:preserve-3d;
     perspective:1000px;
     transition: transform 0.4s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s ease, border-color 0.3s;
     will-change:transform;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.04),
+                0 8px 32px rgba(0,0,0,0.6),
+                0 0 40px rgba(255,255,255,0.03);
   }
   .project-card:nth-child(1) { grid-column: unset; aspect-ratio: unset; }
   .project-card:hover {
-    box-shadow: 0 32px 80px rgba(255,0,0,0.25), 0 0 0 1px rgba(255,0,0,0.35);
+    box-shadow: 0 32px 80px rgba(255,0,0,0.22),
+                0 0 0 1px rgba(255,0,0,0.35),
+                0 0 60px rgba(255,255,255,0.07),
+                0 0 120px rgba(255,255,255,0.04);
     border-color: rgba(255,0,0,0.4);
     z-index:10;
   }
@@ -408,7 +416,7 @@
   /* big image area — fills top of card */
   .project-icon-wrap {
     width:100% !important;
-    height:200px;
+    height:420px;
     border-radius:0 !important;
     border:none !important;
     background:#100000;
@@ -1837,7 +1845,7 @@ return Combat`
         <div class="project-card-body">
           <span class="project-tag">${p.tag || ''}</span>
           <span class="project-title">${p.title}</span>
-          <span class="project-desc">${(p.desc || '').split('\n')[0]}</span>
+          <span class="project-desc">${parseDiscordMd((p.desc || '').split('\n')[0])}</span>
           <div class="project-tags">${(p.tags||[]).map(t => `<span class="ptag">${t}</span>`).join('')}</div>
         </div>
       </div>
@@ -1890,6 +1898,38 @@ return Combat`
   const mDesc  = document.getElementById('modal-desc');
   const mTags  = document.getElementById('modal-tags');
 
+  // ── DISCORD MARKDOWN PARSER ──
+  function parseDiscordMd(text) {
+    if (!text) return '';
+    // Escape HTML first
+    let s = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    // Block: bullet lists (lines starting with - or *)
+    s = s.replace(/^[ \t]*[-*] (.+)$/gm, '<li>$1</li>');
+    s = s.replace(/(<li>.*<\/li>(\n|$))+/g, m => `<ul style="margin:4px 0 4px 16px;padding:0;list-style:disc;">${m}</ul>`);
+
+    // Inline: ***bold italic***
+    s = s.replace(/\*\*\*([\s\S]+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+    // **bold**
+    s = s.replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>');
+    // *italic* or _italic_
+    s = s.replace(/\*([\s\S]+?)\*/g, '<em>$1</em>');
+    s = s.replace(/_([\s\S]+?)_/g, '<em>$1</em>');
+    // __underline__
+    s = s.replace(/__([\s\S]+?)__/g, '<u>$1</u>');
+    // ~~strikethrough~~
+    s = s.replace(/~~([\s\S]+?)~~/g, '<s>$1</s>');
+    // `inline code`
+    s = s.replace(/`([^`]+)`/g, '<code style="background:rgba(255,0,0,0.12);padding:1px 5px;border-radius:3px;font-family:monospace;font-size:.85em;">$1</code>');
+    // line breaks
+    s = s.replace(/\n/g, '<br>');
+
+    return s;
+  }
+
   function openModal(idx) {
     const p = PROJECTS[idx];
     if (!p) return;
@@ -1933,7 +1973,7 @@ return Combat`
 
     mTag.textContent   = p.tag   || '';
     mTitle.textContent = p.title || '';
-    mDesc.textContent  = p.desc  || '';
+    mDesc.innerHTML    = parseDiscordMd(p.desc || '');
     mTags.innerHTML    = (p.tags||[]).map(t => `<span class="ptag">${t}</span>`).join('');
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
