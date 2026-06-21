@@ -1085,6 +1085,119 @@
     margin-left: 6px; /* extra space before caret */
   }
   .code-expand-btn.expanded .btn-caret { transform: rotate(180deg); }
+  /* ── GAMES SECTION ── */
+  #games { max-width:1200px; margin:0 auto; padding:120px 60px; }
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 22px;
+  }
+  .game-card {
+    position: relative; overflow: hidden;
+    border: 1px solid rgba(255,0,0,0.15);
+    background: #080000;
+    display: flex; flex-direction: column;
+    transform-style: preserve-3d; perspective: 1000px;
+    transition: transform 0.4s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s, border-color 0.3s;
+    will-change: transform;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  }
+  .game-card:hover {
+    box-shadow: 0 32px 80px rgba(255,0,0,0.22), 0 0 0 1px rgba(255,0,0,0.35);
+    border-color: rgba(255,0,0,0.4);
+  }
+  .game-card::before {
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(135deg, rgba(255,0,0,0.06) 0%, transparent 55%);
+    z-index:1; opacity:0; transition:opacity 0.4s; pointer-events:none;
+  }
+  .game-card:hover::before { opacity:1; }
+  .game-card::after {
+    content:''; position:absolute; bottom:0; left:10%; right:10%; height:1px;
+    background: linear-gradient(90deg, transparent, var(--red), transparent);
+    transform:scaleX(0); transform-origin:center;
+    transition:transform .4s ease; z-index:5;
+  }
+  .game-card:hover::after { transform:scaleX(1); }
+
+  .game-thumb-wrap {
+    width:100%; flex:0 0 180px; overflow:hidden;
+    background:#100000; position:relative;
+  }
+  .game-thumb {
+    width:100%; height:100%; object-fit:cover; display:block;
+    transition:transform 0.6s cubic-bezier(0.23,1,0.32,1), filter 0.3s;
+    filter:brightness(0.88);
+  }
+  .game-card:hover .game-thumb { transform:scale(1.06); filter:brightness(1); }
+  .game-thumb-wrap::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(to bottom, transparent 45%, rgba(0,0,0,0.55) 100%);
+    pointer-events:none;
+  }
+
+  .game-badge {
+    position:absolute; top:12px; left:12px; z-index:2;
+    font-family:'Share Tech Mono',monospace; font-size:.55rem; letter-spacing:3px;
+    padding:4px 10px; border:1px solid rgba(255,0,0,0.5);
+    background:rgba(0,0,0,0.7); color:var(--red); text-transform:uppercase;
+    backdrop-filter:blur(4px);
+  }
+  .game-badge.released { border-color:rgba(0,255,136,0.5); color:#00ff88; }
+
+  .game-body {
+    padding:18px 22px 20px; display:flex; flex-direction:column; gap:8px;
+    background:linear-gradient(145deg, #0d0000, #060000);
+    border-top:1px solid rgba(255,0,0,0.08); flex:1;
+  }
+  .game-title {
+    font-family:'Bebas Neue',sans-serif; font-size:1.55rem; letter-spacing:2px;
+    color:var(--white); line-height:1.1;
+  }
+  .game-desc {
+    font-size:.82rem; line-height:1.6; color:rgba(255,255,255,0.45); flex:1;
+  }
+  .game-tags { display:flex; flex-wrap:wrap; gap:6px; }
+  .game-tags .ptag { transition:border-color .3s, color .3s; }
+  .game-card:hover .game-tags .ptag { border-color:rgba(255,0,0,0.5); color:var(--white); }
+
+  .game-footer {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top:10px; padding-top:10px;
+    border-top:1px solid rgba(255,0,0,0.08);
+  }
+  .game-ccu {
+    font-family:'Share Tech Mono',monospace; font-size:.6rem; letter-spacing:2px;
+    color:rgba(255,255,255,0.3); display:flex; align-items:center; gap:6px;
+  }
+  .game-ccu-dot {
+    width:6px; height:6px; border-radius:50%; background:#00ff88;
+    box-shadow:0 0 6px #00ff88; animation:statusPulse 2s ease-in-out infinite;
+    flex-shrink:0;
+  }
+  .game-ccu-num { color:rgba(255,255,255,0.55); }
+  .game-play-btn {
+    display:inline-block; padding:7px 18px;
+    font-family:'Share Tech Mono',monospace; font-size:.62rem; letter-spacing:3px;
+    text-transform:uppercase; text-decoration:none;
+    border:1px solid rgba(255,0,0,0.35); color:rgba(255,255,255,0.5);
+    position:relative; overflow:hidden; transition:color .3s, border-color .3s;
+  }
+  .game-play-btn::before {
+    content:''; position:absolute; inset:0;
+    background:var(--red); transform:scaleX(0); transform-origin:left;
+    transition:transform .35s ease; z-index:-1;
+  }
+  .game-play-btn:hover { color:#000; border-color:var(--red); }
+  .game-play-btn:hover::before { transform:scaleX(1); }
+  .game-play-btn:visited { color:rgba(255,255,255,0.5); }
+
+  .games-empty {
+    font-family:'Share Tech Mono',monospace; font-size:.7rem; letter-spacing:3px;
+    color:rgba(255,0,0,0.3); padding:40px 0;
+  }
+  @media(max-width:768px) { #games { padding:70px 18px; } }
+  @media(max-width:480px) { .games-grid { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
@@ -1104,6 +1217,7 @@
     <li><a href="#about"    onclick="closeNav()">About</a></li>
     <li><a href="#skills"   onclick="closeNav()">Skills</a></li>
     <li><a href="#projects" onclick="closeNav()">Work</a></li>
+    <li><a href="#games"    onclick="closeNav()">Games</a></li>
     <li><a href="#pricing"  onclick="closeNav()">Pricing</a></li>
     <li><a href="#services" onclick="closeNav()">Services</a></li>
     <li><a href="#contact"  onclick="closeNav()">Contact</a></li>
@@ -1223,6 +1337,15 @@
   <div class="projects-grid" id="featured-grid"><div class="projects-loading">Loading projects...</div></div>
   <div class="projects-footer reveal">
     <button class="show-more-btn" onclick="openGallery()">[ View All Work ]</button>
+  </div>
+</section>
+
+<!-- FEATURED GAMES -->
+<section id="games">
+  <div class="section-label reveal">// MY GAMES</div>
+  <h2 class="section-title reveal">Featured<br>Games</h2>
+  <div class="games-grid" id="games-grid">
+    <div class="games-empty">Loading games...</div>
   </div>
 </section>
 
@@ -1874,22 +1997,107 @@ return Combat`
       const featured = data.projects?.featured || [];
       const gallery  = data.projects?.gallery  || [];
       PROJECTS = [...featured, ...gallery];
-      if (!isPolled) renderFeatured(featured);
-      else {
+      const games = data.games || [];
+      if (!isPolled) {
+        renderFeatured(featured);
+        GAMES = games; renderGames(games);
+      } else {
         const grid = document.getElementById('featured-grid');
         if (grid) {
           grid.style.transition = 'opacity 0.3s';
           grid.style.opacity = '0';
           setTimeout(() => { renderFeatured(featured); grid.style.opacity = '1'; }, 300);
         }
+        // Only re-render games if list changed
+        if (JSON.stringify(games) !== JSON.stringify(GAMES)) {
+          GAMES = games;
+          const gg = document.getElementById('games-grid');
+          if (gg) { gg.style.transition='opacity 0.3s'; gg.style.opacity='0'; setTimeout(()=>{ renderGames(games); gg.style.opacity='1'; },300); }
+        }
       }
     } catch {
-      if (!isPolled) { PROJECTS = []; renderFeatured([]); renderSkills(DEFAULT_SKILLS); renderServices(DEFAULT_SERVICES); }
+      if (!isPolled) { PROJECTS = []; renderFeatured([]); renderSkills(DEFAULT_SKILLS); renderServices(DEFAULT_SERVICES); GAMES = []; renderGames([]); }
     }
   }
 
   loadProjects(false);
   setInterval(() => loadProjects(true), 5000);
+
+  // ── GAMES ──
+  let GAMES = [];
+
+  async function fetchCCU(universeId) {
+    try {
+      const res = await fetch(`https://games.roblox.com/v1/games?universeIds=${universeId}`);
+      if (!res.ok) return null;
+      const json = await res.json();
+      return json.data?.[0]?.playing ?? null;
+    } catch { return null; }
+  }
+
+  function fmtCCU(n) {
+    if (n === null || n === undefined) return '—';
+    if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+    return String(n);
+  }
+
+  async function renderGames(games) {
+    const grid = document.getElementById('games-grid');
+    if (!grid) return;
+    if (!games || !games.length) {
+      grid.innerHTML = '<p class="games-empty">No games listed yet.</p>';
+      return;
+    }
+
+    // Render cards immediately with placeholder CCU
+    grid.innerHTML = games.map((g, i) => `
+      <div class="game-card reveal" data-game="${i}">
+        <div class="game-thumb-wrap">
+          ${g.thumbnail
+            ? `<img src="${g.thumbnail}" alt="${g.title}" class="game-thumb" loading="lazy">`
+            : `<div class="game-thumb" style="display:flex;align-items:center;justify-content:center;font-size:3rem;color:rgba(255,0,0,0.15);">🎮</div>`
+          }
+          ${g.badge ? `<div class="game-badge${g.badge.toLowerCase()==='released'?' released':''}">${g.badge}</div>` : ''}
+        </div>
+        <div class="game-body">
+          <div class="game-title">${g.title}</div>
+          <div class="game-desc">${g.desc || ''}</div>
+          <div class="game-tags">${(g.tags||[]).map(t=>`<span class="ptag">${t}</span>`).join('')}</div>
+          <div class="game-footer">
+            <div class="game-ccu">
+              <div class="game-ccu-dot"></div>
+              <span id="ccu-${i}" class="game-ccu-num">...</span>
+              <span>playing</span>
+            </div>
+            ${g.url ? `<a href="${g.url}" target="_blank" rel="noopener" class="game-play-btn">Play →</a>` : ''}
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    apply3DTilt('.game-card', 5, 0.04);
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // Fetch CCU for each game
+    await Promise.all(games.map(async (g, i) => {
+      const el = document.getElementById(`ccu-${i}`);
+      if (!el) return;
+      if (!g.universeId) { el.textContent = '—'; return; }
+      const ccu = await fetchCCU(g.universeId);
+      el.textContent = fmtCCU(ccu);
+    }));
+  }
+
+  // Refresh CCU every 60s without re-rendering cards
+  async function refreshCCU() {
+    await Promise.all(GAMES.map(async (g, i) => {
+      const el = document.getElementById(`ccu-${i}`);
+      if (!el || !g.universeId) return;
+      const ccu = await fetchCCU(g.universeId);
+      el.textContent = fmtCCU(ccu);
+    }));
+  }
+  setInterval(refreshCCU, 60000);
 
   // ── MODAL ──
   const modal  = document.getElementById('proj-modal');
