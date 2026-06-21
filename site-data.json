@@ -48,6 +48,20 @@
         "icon": "https://i.imgur.com/1iJqZRw.jpeg",
         "media": "https://vimeo.com/1196621155?fl=ip&fe=ec",
         "mediaType": "video"
+      },
+      {
+        "title": "[#1 Skill] Fireball",
+        "desc": "A Fireball projectile that utilizes bezier curve math.",
+        "tags": [
+          "Luau",
+          "Combat",
+          "Physics",
+          "Math"
+        ],
+        "tag": "Game Systems",
+        "icon": "https://i.imgur.com/QEDSJ4T.png",
+        "media": "https://vimeo.com/1203201416?share=copy&fl=sv&fe=ci",
+        "mediaType": "video"
       }
     ],
     "gallery": []
