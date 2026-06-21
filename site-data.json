@@ -60,6 +60,10 @@
         "icon": "https://i.imgur.com/QEDSJ4T.png",
         "media": "https://vimeo.com/1203201416?share=copy&fl=sv&fe=ci",
         "mediaType": "video"
+      },
+      {
+        "media": "https://vimeo.com/1203201416?share=copy&fl=sv&fe=ci",
+        "mediaType": "video"
       }
     ],
     "gallery": []
