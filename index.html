@@ -1198,6 +1198,17 @@
   }
   @media(max-width:768px) { #games { padding:70px 18px; } }
   @media(max-width:480px) { .games-grid { grid-template-columns:1fr; } }
+
+  /* ALL GAMES PAGE */
+  #games-all-page {
+    position:fixed; inset:0; z-index:500;
+    background:#000; overflow-y:auto;
+    transform:translateX(100%);
+    transition:transform .5s cubic-bezier(.22,1,.36,1);
+    scrollbar-width:thin; scrollbar-color:rgba(255,0,0,0.3) transparent;
+  }
+  #games-all-page.open { transform:translateX(0); }
+  @media(max-width:768px) { #games-all-page > div:last-child { padding: 20px 18px; } }
 </style>
 </head>
 <body>
@@ -1347,7 +1358,22 @@
   <div class="games-grid" id="games-grid">
     <div class="games-empty">Loading games...</div>
   </div>
+  <div class="projects-footer reveal">
+    <button class="show-more-btn" onclick="openGamesGallery()">[ View All Games ]</button>
+  </div>
 </section>
+
+<!-- ALL GAMES PAGE -->
+<div id="games-all-page">
+  <div class="gallery-header">
+    <button class="gallery-back" onclick="closeGamesGallery()">← Back</button>
+    <div class="gallery-title">ALL GAMES</div>
+    <div style="width:100px"></div>
+  </div>
+  <div style="padding:40px 60px;max-width:1400px;margin:0 auto;">
+    <div class="games-grid" id="games-all-grid"></div>
+  </div>
+</div>
 
 <!-- PROJECT DETAIL MODAL -->
 <div id="proj-modal" role="dialog" aria-modal="true">
@@ -2000,7 +2026,7 @@ return Combat`
       const games = data.games || [];
       if (!isPolled) {
         renderFeatured(featured);
-        GAMES = games; renderGames(games);
+        GAMES = games; renderGames(games); renderGamesGallery(games);
       } else {
         const grid = document.getElementById('featured-grid');
         if (grid) {
@@ -2013,6 +2039,7 @@ return Combat`
           GAMES = games;
           const gg = document.getElementById('games-grid');
           if (gg) { gg.style.transition='opacity 0.3s'; gg.style.opacity='0'; setTimeout(()=>{ renderGames(games); gg.style.opacity='1'; },300); }
+          renderGamesGallery(games);
         }
       }
     } catch {
@@ -2026,22 +2053,13 @@ return Combat`
   // ── GAMES ──
   let GAMES = [];
 
-  async function fetchCCU(universeId) {
-    try {
-      const res = await fetch(`https://games.roblox.com/v1/games?universeIds=${universeId}`);
-      if (!res.ok) return null;
-      const json = await res.json();
-      return json.data?.[0]?.playing ?? null;
-    } catch { return null; }
-  }
-
   function fmtCCU(n) {
-    if (n === null || n === undefined) return '—';
+    if (n === null || n === undefined) return '0';
     if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
     return String(n);
   }
 
-  async function renderGames(games) {
+  function renderGames(games) {
     const grid = document.getElementById('games-grid');
     if (!grid) return;
     if (!games || !games.length) {
@@ -2049,7 +2067,6 @@ return Combat`
       return;
     }
 
-    // Render cards immediately with placeholder CCU
     grid.innerHTML = games.map((g, i) => `
       <div class="game-card reveal" data-game="${i}">
         <div class="game-thumb-wrap">
@@ -2066,7 +2083,7 @@ return Combat`
           <div class="game-footer">
             <div class="game-ccu">
               <div class="game-ccu-dot"></div>
-              <span id="ccu-${i}" class="game-ccu-num">...</span>
+              <span class="game-ccu-num">${fmtCCU(g.ccu)}</span>
               <span>playing</span>
             </div>
             ${g.url ? `<a href="${g.url}" target="_blank" rel="noopener" class="game-play-btn">Play →</a>` : ''}
@@ -2077,27 +2094,51 @@ return Combat`
 
     apply3DTilt('.game-card', 5, 0.04);
     document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-
-    // Fetch CCU for each game
-    await Promise.all(games.map(async (g, i) => {
-      const el = document.getElementById(`ccu-${i}`);
-      if (!el) return;
-      if (!g.universeId) { el.textContent = '—'; return; }
-      const ccu = await fetchCCU(g.universeId);
-      el.textContent = fmtCCU(ccu);
-    }));
   }
 
-  // Refresh CCU every 60s without re-rendering cards
-  async function refreshCCU() {
-    await Promise.all(GAMES.map(async (g, i) => {
-      const el = document.getElementById(`ccu-${i}`);
-      if (!el || !g.universeId) return;
-      const ccu = await fetchCCU(g.universeId);
-      el.textContent = fmtCCU(ccu);
-    }));
+  function renderGamesGallery(games) {
+    const grid = document.getElementById('games-all-grid');
+    if (!grid) return;
+    if (!games || !games.length) {
+      grid.innerHTML = '<p class="games-empty" style="padding:60px">No games yet.</p>';
+      return;
+    }
+    grid.innerHTML = games.map((g, i) => `
+      <div class="game-card reveal">
+        <div class="game-thumb-wrap">
+          ${g.thumbnail
+            ? `<img src="${g.thumbnail}" alt="${g.title}" class="game-thumb" loading="lazy">`
+            : `<div class="game-thumb" style="display:flex;align-items:center;justify-content:center;font-size:3rem;color:rgba(255,0,0,0.15);">🎮</div>`
+          }
+          ${g.badge ? `<div class="game-badge${g.badge.toLowerCase()==='released'?' released':''}">${g.badge}</div>` : ''}
+        </div>
+        <div class="game-body">
+          <div class="game-title">${g.title}</div>
+          <div class="game-desc">${g.desc || ''}</div>
+          <div class="game-tags">${(g.tags||[]).map(t=>`<span class="ptag">${t}</span>`).join('')}</div>
+          <div class="game-footer">
+            <div class="game-ccu">
+              <div class="game-ccu-dot"></div>
+              <span class="game-ccu-num">${fmtCCU(g.ccu)}</span>
+              <span>playing</span>
+            </div>
+            ${g.url ? `<a href="${g.url}" target="_blank" rel="noopener" class="game-play-btn">Play →</a>` : ''}
+          </div>
+        </div>
+      </div>
+    `).join('');
+    apply3DTilt('.game-card', 5, 0.04);
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
   }
-  setInterval(refreshCCU, 60000);
+
+  function openGamesGallery() {
+    document.getElementById('games-all-page').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeGamesGallery() {
+    document.getElementById('games-all-page').classList.remove('open');
+    document.body.style.overflow = '';
+  }
 
   // ── MODAL ──
   const modal  = document.getElementById('proj-modal');
