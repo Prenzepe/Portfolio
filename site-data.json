@@ -62,10 +62,6 @@
         "mediaType": "video"
       },
       {
-        "media": "https://vimeo.com/1203201416?share=copy&fl=sv&fe=ci",
-        "mediaType": "video"
-      },
-      {
         "title": "[#1 Skill] Fireball",
         "desc": "A Fireball skill that utilizes bezier curve math.",
         "tags": [
