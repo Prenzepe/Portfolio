@@ -32,7 +32,8 @@
       ],
       "universeId": "8418125689",
       "url": "https://www.roblox.com/games/138515320278642/Build-a-Bridge",
-      "thumbnail": "https://i.imgur.com/BQ5dGIU.png"
+      "thumbnail": "https://i.imgur.com/BQ5dGIU.png",
+      "ccu": 0
     },
     {
       "title": "Into the Backrooms TD ⚔️",
@@ -42,7 +43,7 @@
         "Multiplayer",
         "Simulation"
       ],
-      "ccu": 0,
+      "ccu": 21,
       "universeId": "10233180411",
       "url": "https://www.roblox.com/games/123446017566246/Into-the-Backrooms-TD"
     }
